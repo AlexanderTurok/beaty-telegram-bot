@@ -24,13 +24,10 @@ func (b *Bot) Start() error {
 		}
 
 		// Handle commands
-		// if update.Message.IsCommand() {
-		// 	if err := b.handleCommand(update.Message); err != nil {
-		// 		b.handleError(update.Message.Chat.ID, err)
-		// 	}
-
-		// 	continue
-		// }
+		if update.Message.IsCommand() {
+			b.handleCommand(update.Message)
+			continue
+		}
 
 		// Handle regular messages
 		// if err := b.handleMessage(update.Message); err != nil {
