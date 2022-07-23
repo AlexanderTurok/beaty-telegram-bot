@@ -1,6 +1,8 @@
 package telegram
 
-import tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+import (
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+)
 
 type Bot struct {
 	bot *tgbotapi.BotAPI
@@ -25,13 +27,15 @@ func (b *Bot) Start() error {
 
 		// Handle commands
 		if update.Message.IsCommand() {
-			b.handleCommand(update.Message)
+			if err := b.handleCommands(update.Message); err != nil {
+				b.handleError(update.Message, err)
+			}
 			continue
 		}
 
 		// Handle regular messages
-		// if err := b.handleMessage(update.Message); err != nil {
-		// 	b.handleError(update.Message.Chat.ID, err)
+		// if err := b.handleMessages(update.Message); err != nil {
+		// 	b.handleError(update.Message, err)
 		// }
 	}
 

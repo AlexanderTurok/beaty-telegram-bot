@@ -6,14 +6,24 @@ const (
 	start = "start"
 )
 
-func (b *Bot) handleCommand(message *tgbotapi.Message) {
+func (b *Bot) handleCommands(message *tgbotapi.Message) error {
 	switch message.Command() {
 	case start:
 		msg := tgbotapi.NewMessage(message.Chat.ID, "Hello, it's Beaty Bot. Choose your role to start:")
-		b.bot.Send(msg)
-
+		_, err := b.bot.Send(msg)
+		return err
 	default:
 		msg := tgbotapi.NewMessage(message.Chat.ID, "unknown command...")
-		b.bot.Send(msg)
+		_, err := b.bot.Send(msg)
+		return err
 	}
+}
+
+// func (b *Bot) handleMessages(message *tgbotapi.Message) error {
+
+// }
+
+func (b *Bot) handleError(message *tgbotapi.Message, err error) {
+	msg := tgbotapi.NewMessage(message.Chat.ID, err.Error())
+	b.bot.Send(msg)
 }
