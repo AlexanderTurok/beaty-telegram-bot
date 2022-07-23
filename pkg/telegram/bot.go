@@ -34,9 +34,9 @@ func (b *Bot) Start() error {
 		}
 
 		// Handle regular messages
-		// if err := b.handleMessages(update.Message); err != nil {
-		// 	b.handleError(update.Message, err)
-		// }
+		if err := b.handleMessages(update.Message); err != nil {
+			b.handleError(update.Message, err)
+		}
 	}
 
 	return nil
