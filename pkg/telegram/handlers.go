@@ -1,6 +1,9 @@
 package telegram
 
-import tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+import (
+	"github.com/AlexanderTurok/beaty-telegram-bot/pkg/data"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+)
 
 const (
 	start = "start"
@@ -32,7 +35,11 @@ func (b *Bot) handleCommands(message *tgbotapi.Message) error {
 func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 	switch message.Text {
 	case miss:
-		return nil
+		exists, err := data.IsParticipantRowExists("SELECT uuid FROM participant", message.Chat.ID)
+		if exists {
+			return err
+		}
+		return err
 	case voter:
 		return nil
 	default:
