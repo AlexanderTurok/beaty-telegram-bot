@@ -1,10 +1,10 @@
 package telegram
 
 type Participant struct {
-	Id          int
-	Uuid        int
-	Nickname    string
-	Photo       string
-	Information string
-	Votes       int
+	Id          int    `db:"id"`
+	Uuid        int    `db:"uuid"`
+	Nickname    string `db:"nickname"`
+	Photo       string `db:"photo"`
+	Information string `db:"information"`
+	Votes       int    `db:"votes"`
 }
