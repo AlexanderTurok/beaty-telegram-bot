@@ -1,0 +1,40 @@
+package telegram
+
+import "fmt"
+
+func (b *Bot) isParticipantInDB(uuid int) (bool, error) {
+	var exists bool
+	query := fmt.Sprintf("SELECT EXISTS(SELECT 1 FROM participants WHERE uuid = %d);", uuid)
+	err := b.postgres.QueryRow(query).Scan(&exists)
+
+	return exists, err
+}
+
+func (b *Bot) getParticipantFromDB(uuid int, args ...interface{}) (Participant, error) {
+	var p Participant
+	query := fmt.Sprintf("SELECT (%v) FROM participants WHERE uuid=%d;", args, uuid)
+	err := b.postgres.QueryRow(query).Scan(&p.Id, &p.Uuid, &p.Nickname, &p.Photo, &p.Information, &p.Votes)
+
+	return p, err
+}
+
+func (b *Bot) addParticipantToDB(column string, row interface{}) error {
+	query := fmt.Sprintf("INSERT INTO participants (%s) VALUES (%v);", column, row)
+	_, err := b.postgres.Exec(query)
+
+	return err
+}
+
+func (b *Bot) updateParticipantInDB(column, row string, uuid int) error {
+	query := fmt.Sprintf("UPDATE participants SET %s='%s' WHERE uuid=%d", column, row, uuid)
+	_, err := b.postgres.Exec(query)
+
+	return err
+}
+
+func (b *Bot) deleteParticipantFromDB(column string, row interface{}) error {
+	query := fmt.Sprintf("DELETE FROM participants WHERE %s=%v;", column, row)
+	_, err := b.postgres.Exec(query)
+
+	return err
+}
