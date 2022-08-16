@@ -10,12 +10,12 @@ func (b *Bot) isParticipantInDB(uuid int) (bool, error) {
 	return exists, err
 }
 
-func (b *Bot) getParticipantFromDB(uuid int, args ...interface{}) (Participant, error) {
+func (b *Bot) getParticipantFromDB(uuid int) (*Participant, error) {
 	var p Participant
-	query := fmt.Sprintf("SELECT (%v) FROM participants WHERE uuid=%d;", args, uuid)
+	query := fmt.Sprintf("SELECT * FROM participants WHERE uuid=%d;", uuid)
 	err := b.postgres.QueryRow(query).Scan(&p.Id, &p.Uuid, &p.Nickname, &p.Photo, &p.Information, &p.Votes)
 
-	return p, err
+	return &p, err
 }
 
 func (b *Bot) addParticipantToDB(column string, row interface{}) error {
