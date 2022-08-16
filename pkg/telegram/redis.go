@@ -2,7 +2,7 @@ package telegram
 
 import "fmt"
 
-func (b *Bot) setCache(key int, value string) error {
+func (b *Bot) setCache(key int, value interface{}) error {
 	err := b.redis.Set(b.ctx, fmt.Sprint(key), value, 0)
 	return err.Err()
 }
