@@ -1,6 +1,8 @@
 package telegram
 
 import (
+	"fmt"
+
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
@@ -15,7 +17,8 @@ const (
 	// register
 	name        = "Change a Name"
 	photo       = "Add a Photo"
-	description = "Give a Description"
+	description = "Write a Description"
+	profile     = "Show my Profile!"
 	back        = "Go Back"
 )
 
@@ -35,6 +38,9 @@ var registrationKeyboard = tgbotapi.NewReplyKeyboard(
 	),
 	tgbotapi.NewKeyboardButtonRow(
 		tgbotapi.NewKeyboardButton(description),
+	),
+	tgbotapi.NewKeyboardButtonRow(
+		tgbotapi.NewKeyboardButton(profile),
 	),
 	tgbotapi.NewKeyboardButtonRow(
 		tgbotapi.NewKeyboardButton(back),
@@ -98,6 +104,18 @@ func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 
 		err = b.setCache(message.From.ID, "description")
 		return err
+	case profile:
+		user, err := b.getParticipantFromDB(message.From.ID)
+		fmt.Println(user.Photo, user.Nickname, user.Information)
+		if err != nil {
+			return err
+		}
+
+		msg := tgbotapi.NewPhotoShare(message.Chat.ID, user.Photo)
+		msg.Caption = fmt.Sprintf("%s, %s", user.Nickname, user.Information)
+		_, err = b.bot.Send(msg)
+
+		return err
 	case voter:
 		return nil
 	default:
@@ -127,12 +145,8 @@ func (b *Bot) handleCache(message *tgbotapi.Message, value string) error {
 		if err := b.deleteCache(message.From.ID); err != nil {
 			return err
 		}
-		imageUrl, err := b.bot.GetFileDirectURL((*message.Photo)[0].FileID)
-		if err != nil {
-			return err
-		}
 
-		err = b.updateParticipantInDB("photo", imageUrl, message.From.ID)
+		err := b.updateParticipantInDB("photo", (*message.Photo)[0].FileID, message.From.ID)
 		if err != nil {
 			return err
 		} else {
