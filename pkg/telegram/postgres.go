@@ -18,6 +18,19 @@ func (b *Bot) getParticipantFromDB(uuid int) (*Participant, error) {
 	return &p, err
 }
 
+func (b *Bot) getAllParticipantsFromDB() (*[]Participant, error) {
+	var pArray []Participant
+	rows, err := b.postgres.Query("SELECT * FROM participants;")
+	for rows.Next() {
+		var p Participant
+		if err := rows.Scan(&p.Id, &p.Uuid, &p.Nickname, &p.Photo, &p.Information, &p.Votes); err != nil {
+			return &pArray, err
+		}
+		pArray = append(pArray, p)
+	}
+	return &pArray, err
+}
+
 func (b *Bot) addParticipantToDB(column string, row interface{}) error {
 	query := fmt.Sprintf("INSERT INTO participants (%s) VALUES (%v);", column, row)
 	_, err := b.postgres.Exec(query)
@@ -27,6 +40,13 @@ func (b *Bot) addParticipantToDB(column string, row interface{}) error {
 
 func (b *Bot) updateParticipantInDB(column, row string, uuid int) error {
 	query := fmt.Sprintf("UPDATE participants SET %s='%s' WHERE uuid=%d", column, row, uuid)
+	_, err := b.postgres.Exec(query)
+
+	return err
+}
+
+func (b *Bot) updateVotesInDB(uuid string) error {
+	query := fmt.Sprintf("UPDATE participants SET votes = votes + 1 WHERE uuid=%s", uuid)
 	_, err := b.postgres.Exec(query)
 
 	return err
