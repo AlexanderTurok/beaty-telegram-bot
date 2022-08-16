@@ -20,6 +20,10 @@ const (
 	description = "Write a Description"
 	profile     = "Show my Profile!"
 	back        = "Go Back"
+
+	// votes
+	like    = "👍"
+	dislike = "👎"
 )
 
 var roleKeyboard = tgbotapi.NewReplyKeyboard(
@@ -44,6 +48,13 @@ var registrationKeyboard = tgbotapi.NewReplyKeyboard(
 	),
 	tgbotapi.NewKeyboardButtonRow(
 		tgbotapi.NewKeyboardButton(back),
+	),
+)
+
+var voteKeyboard = tgbotapi.NewReplyKeyboard(
+	tgbotapi.NewKeyboardButtonRow(
+		tgbotapi.NewKeyboardButton(like),
+		tgbotapi.NewKeyboardButton(dislike),
 	),
 )
 
@@ -117,7 +128,26 @@ func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 
 		return err
 	case voter:
-		return nil
+		participants, err := b.getAllParticipantsFromDB()
+		if err != nil {
+			return err
+		}
+		fmt.Println(participants)
+
+		msg := tgbotapi.NewPhotoShare(message.Chat.ID, (*participants)[0].Photo)
+		msg.ReplyMarkup = tgbotapi.ReplyKeyboardMarkup{
+			Keyboard:        voteKeyboard.Keyboard,
+			OneTimeKeyboard: true,
+		}
+		msg.Caption = fmt.Sprintf("%s, %s", (*participants)[0].Nickname, (*participants)[0].Information)
+
+		_, err = b.bot.Send(msg)
+		if err != nil {
+			return err
+		}
+
+		err = b.setCache(message.From.ID, (*participants)[0].Uuid)
+		return err
 	default:
 		msg := tgbotapi.NewMessage(message.Chat.ID, "unknown message...")
 		_, err := b.bot.Send(msg)
@@ -170,8 +200,16 @@ func (b *Bot) handleCache(message *tgbotapi.Message, value string) error {
 			return err
 		}
 	default:
-		msg := tgbotapi.NewMessage(message.Chat.ID, "error occured while getting cache, use /start to resolve problem...")
+		user := b.getCache(message.From.ID)
+		b.updateVotesInDB(user)
+		msg := tgbotapi.NewMessage(message.Chat.ID, "you voted")
+
 		_, err := b.bot.Send(msg)
+		if err != nil {
+			return err
+		}
+
+		err = b.deleteCache(message.From.ID)
 		return err
 	}
 }
