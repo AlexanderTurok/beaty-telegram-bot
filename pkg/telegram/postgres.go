@@ -52,8 +52,8 @@ func (b *Bot) updateVotesInDB(uuid string) error {
 	return err
 }
 
-func (b *Bot) deleteParticipantFromDB(column string, row interface{}) error {
-	query := fmt.Sprintf("DELETE FROM participants WHERE %s=%v;", column, row)
+func (b *Bot) deleteParticipantFromDB(uuid int) error {
+	query := fmt.Sprintf("DELETE * FROM participants WHERE uuid=%v;", uuid)
 	_, err := b.postgres.Exec(query)
 
 	return err
