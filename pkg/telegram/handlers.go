@@ -19,7 +19,8 @@ const (
 	photo       = "Add a Photo"
 	description = "Write a Description"
 	profile     = "Show my Profile!"
-	back        = "Go Back"
+	delete      = "Delete my Profile!"
+	back        = "Go Back🔙"
 
 	// votes
 	like    = "👍"
@@ -36,15 +37,12 @@ var roleKeyboard = tgbotapi.NewReplyKeyboard(
 var registrationKeyboard = tgbotapi.NewReplyKeyboard(
 	tgbotapi.NewKeyboardButtonRow(
 		tgbotapi.NewKeyboardButton(name),
-	),
-	tgbotapi.NewKeyboardButtonRow(
 		tgbotapi.NewKeyboardButton(photo),
-	),
-	tgbotapi.NewKeyboardButtonRow(
 		tgbotapi.NewKeyboardButton(description),
 	),
 	tgbotapi.NewKeyboardButtonRow(
 		tgbotapi.NewKeyboardButton(profile),
+		tgbotapi.NewKeyboardButton(delete),
 	),
 	tgbotapi.NewKeyboardButtonRow(
 		tgbotapi.NewKeyboardButton(back),
@@ -148,6 +146,31 @@ func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 
 		err = b.setCache(message.From.ID, (*participants)[0].Uuid)
 		return err
+	case delete:
+		err := b.deleteParticipantFromDB(message.From.ID)
+		if err != nil {
+			return err
+		}
+
+		msg := tgbotapi.NewMessage(message.Chat.ID, "Your profile successfully deleted! Choose avaible method: ")
+		msg.ReplyMarkup = roleKeyboard
+		_, err = b.bot.Send(msg)
+		if err != nil {
+			return err
+		}
+
+		err = b.deleteCache(message.From.ID)
+		return err
+	case back:
+		if err := b.deleteCache(message.From.ID); err != nil {
+			return err
+		}
+
+		msg := tgbotapi.NewMessage(message.Chat.ID, "Choose avaible method: ")
+		msg.ReplyMarkup = roleKeyboard
+		_, err := b.bot.Send(msg)
+
+		return err
 	default:
 		msg := tgbotapi.NewMessage(message.Chat.ID, "unknown message...")
 		_, err := b.bot.Send(msg)
@@ -200,6 +223,7 @@ func (b *Bot) handleCache(message *tgbotapi.Message, value string) error {
 			return err
 		}
 	default:
+		// handle votes
 		user := b.getCache(message.From.ID)
 		b.updateVotesInDB(user)
 		msg := tgbotapi.NewMessage(message.Chat.ID, "you voted")
