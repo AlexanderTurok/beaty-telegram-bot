@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"log"
 	"os"
 
@@ -28,13 +29,13 @@ func main() {
 
 	botApi.Debug = true
 
-	postgres, err := sql.Open("postgres", "dbname=tgbeatybot sslmode=disable")
+	postgres, err := sql.Open("postgres", fmt.Sprintf("dbname=%s sslmode=disable", os.Getenv("DB_NAME")))
 	if err != nil {
 		log.Fatalf("error while openig postgres: %s", err.Error())
 	}
 
 	redis := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
+		Addr:     os.Getenv("REDIS_ADDRESS"),
 		Password: "",
 		DB:       0,
 	})
