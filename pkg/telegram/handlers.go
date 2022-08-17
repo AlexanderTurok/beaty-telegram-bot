@@ -167,9 +167,13 @@ func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 		}
 
 		id, _ := strconv.Atoi(participantID) // convert string to int
+		if err := b.setCache(message.From.ID, id+1); err != nil {
+			return err
+		}
 
 		if id > len(*p) {
 			msg := tgbotapi.NewMessage(message.Chat.ID, "You voted for all participants. Wait some time for new participants...")
+			msg.ReplyMarkup = roleKeyboard
 			_, err := b.bot.Send(msg)
 			if err != nil {
 				return err
@@ -186,9 +190,6 @@ func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 			if err != nil {
 				return err
 			}
-
-			err = b.setCache(message.From.ID, (*p)[id].Id)
-			return err
 		}
 		return nil
 	case like:
@@ -209,6 +210,7 @@ func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 
 		if id > len(*p) {
 			msg := tgbotapi.NewMessage(message.Chat.ID, "You voted for all participants. Wait some time for new participants...")
+			msg.ReplyMarkup = roleKeyboard
 			_, err := b.bot.Send(msg)
 			if err != nil {
 				return err
@@ -245,6 +247,7 @@ func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 
 		if id > len(*p) {
 			msg := tgbotapi.NewMessage(message.Chat.ID, "You voted for all participants. Wait some time for new participants...")
+			msg.ReplyMarkup = roleKeyboard
 			_, err := b.bot.Send(msg)
 			if err != nil {
 				return err
