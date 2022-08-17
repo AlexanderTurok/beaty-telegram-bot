@@ -47,7 +47,7 @@ func (b *Bot) Start() {
 			continue
 		}
 
-		if value := b.getCache(update.Message.From.ID); value != "" {
+		if value := b.getCache(update.Message.From.ID); value == "name" || value == "photo" || value == "description" {
 			err := b.handleCache(update.Message, value)
 			if err != nil {
 				log.Fatalf("error in cache handler: %s", err)
