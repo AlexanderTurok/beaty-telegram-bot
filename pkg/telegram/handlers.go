@@ -12,8 +12,8 @@ const (
 	start = "start"
 
 	// choose role
-	miss  = "New Miss!"
-	voter = "Voter!"
+	register = "Register!"
+	vote     = "Vote!"
 
 	// register
 	name        = "Change a Name"
@@ -21,7 +21,7 @@ const (
 	description = "Write a Description"
 	profile     = "Show my Profile!"
 	delete      = "Delete my Profile!"
-	back        = "Go Back🔙"
+	back        = "🔙"
 
 	// votes
 	like    = "👍"
@@ -30,8 +30,8 @@ const (
 
 var roleKeyboard = tgbotapi.NewReplyKeyboard(
 	tgbotapi.NewKeyboardButtonRow(
-		tgbotapi.NewKeyboardButton(miss),
-		tgbotapi.NewKeyboardButton(voter),
+		tgbotapi.NewKeyboardButton(register),
+		tgbotapi.NewKeyboardButton(vote),
 	),
 )
 
@@ -74,7 +74,7 @@ func (b *Bot) handleCommands(message *tgbotapi.Message) error {
 
 func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 	switch message.Text {
-	case miss:
+	case register:
 		exists, err := b.isParticipantInDB(message.From.ID)
 		if err != nil {
 			return err
@@ -86,6 +86,7 @@ func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 		msg := tgbotapi.NewMessage(message.Chat.ID, "Here is available methods:")
 		msg.ReplyMarkup = registrationKeyboard
 		_, err = b.bot.Send(msg)
+
 		return err
 	case name:
 		msg := tgbotapi.NewMessage(message.Chat.ID, "Send your name visible to others")
@@ -151,7 +152,7 @@ func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 		_, err := b.bot.Send(msg)
 
 		return err
-	case voter:
+	case vote:
 		participantID := b.getCache(message.From.ID)
 		if participantID == "" {
 			err := b.setCache(message.From.ID, 0)
