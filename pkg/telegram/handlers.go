@@ -136,6 +136,7 @@ func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 		msg.ReplyMarkup = tgbotapi.ReplyKeyboardMarkup{
 			Keyboard:        voteKeyboard.Keyboard,
 			OneTimeKeyboard: true,
+			ResizeKeyboard:  true,
 		}
 		msg.Caption = fmt.Sprintf("%s, %s", (*participants)[0].Nickname, (*participants)[0].Information)
 
@@ -170,6 +171,27 @@ func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 		msg.ReplyMarkup = roleKeyboard
 		_, err := b.bot.Send(msg)
 
+		return err
+	case like:
+		user := b.getCache(message.From.ID)
+		b.updateVotesInDB(user)
+
+		msg := tgbotapi.NewMessage(message.Chat.ID, "you liked")
+		_, err := b.bot.Send(msg)
+		if err != nil {
+			return err
+		}
+
+		err = b.deleteCache(message.From.ID)
+		return err
+	case dislike:
+		msg := tgbotapi.NewMessage(message.Chat.ID, "you disliked")
+		_, err := b.bot.Send(msg)
+		if err != nil {
+			return err
+		}
+
+		err = b.deleteCache(message.From.ID)
 		return err
 	default:
 		msg := tgbotapi.NewMessage(message.Chat.ID, "unknown message...")
@@ -223,17 +245,8 @@ func (b *Bot) handleCache(message *tgbotapi.Message, value string) error {
 			return err
 		}
 	default:
-		// handle votes
-		user := b.getCache(message.From.ID)
-		b.updateVotesInDB(user)
-		msg := tgbotapi.NewMessage(message.Chat.ID, "you voted")
-
+		msg := tgbotapi.NewMessage(message.Chat.ID, "something went from with cache handler")
 		_, err := b.bot.Send(msg)
-		if err != nil {
-			return err
-		}
-
-		err = b.deleteCache(message.From.ID)
 		return err
 	}
 }
