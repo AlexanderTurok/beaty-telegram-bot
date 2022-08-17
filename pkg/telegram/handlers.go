@@ -82,12 +82,11 @@ func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 		if !exists {
 			err := b.addParticipantToDB("uuid", message.From.ID)
 			return err
-		} else {
-			msg := tgbotapi.NewMessage(message.Chat.ID, "Here is available methods:")
-			msg.ReplyMarkup = registrationKeyboard
-			_, err := b.bot.Send(msg)
-			return err
 		}
+		msg := tgbotapi.NewMessage(message.Chat.ID, "Here is available methods:")
+		msg.ReplyMarkup = registrationKeyboard
+		_, err = b.bot.Send(msg)
+		return err
 	case name:
 		msg := tgbotapi.NewMessage(message.Chat.ID, "Send your name visible to others")
 		_, err := b.bot.Send(msg)
