@@ -10,9 +10,9 @@ func (b *Bot) isParticipantInDB(uuid int) (bool, error) {
 	return exists, err
 }
 
-func (b *Bot) getParticipantFromDB(uuid int) (*Participant, error) {
+func (b *Bot) getParticipantFromDB(column string, row interface{}) (*Participant, error) {
 	var p Participant
-	query := fmt.Sprintf("SELECT * FROM participants WHERE uuid=%d;", uuid)
+	query := fmt.Sprintf("SELECT * FROM participants WHERE %s=%v;", column, row)
 	err := b.postgres.QueryRow(query).Scan(&p.Id, &p.Uuid, &p.Nickname, &p.Photo, &p.Information, &p.Votes)
 
 	return &p, err
@@ -45,8 +45,8 @@ func (b *Bot) updateParticipantInDB(column, row string, uuid int) error {
 	return err
 }
 
-func (b *Bot) updateVotesInDB(uuid string) error {
-	query := fmt.Sprintf("UPDATE participants SET votes = votes + 1 WHERE uuid=%s", uuid)
+func (b *Bot) updateVotesInDB(id string) error {
+	query := fmt.Sprintf("UPDATE participants SET votes = votes + 1 WHERE id=%s", id)
 	_, err := b.postgres.Exec(query)
 
 	return err
