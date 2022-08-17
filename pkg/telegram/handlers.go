@@ -124,7 +124,9 @@ func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 
 		msg := tgbotapi.NewPhotoShare(message.Chat.ID, user.Photo)
 		msg.Caption = fmt.Sprintf("%s, %s", user.Nickname, user.Information)
-		_, err = b.bot.Send(msg)
+		if user.Photo != "" && user.Nickname != "" && user.Information != "" {
+			_, err = b.bot.Send(msg)
+		}
 
 		return err
 	case delete:
@@ -187,10 +189,11 @@ func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 				ResizeKeyboard:  true,
 			}
 			msg.Caption = fmt.Sprintf("%s, %s", (*p)[id].Nickname, (*p)[id].Information)
-			_, err = b.bot.Send(msg)
-			if err != nil {
-				return err
+			if (*p)[id].Photo != "" && (*p)[id].Nickname != "" && (*p)[id].Information != "" {
+				_, err = b.bot.Send(msg)
 			}
+
+			return err
 		}
 		return nil
 	case like:
@@ -224,8 +227,9 @@ func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 				ResizeKeyboard:  true,
 			}
 			msg.Caption = fmt.Sprintf("%s, %s", (*p)[id].Nickname, (*p)[id].Information)
-			_, err = b.bot.Send(msg)
-
+			if (*p)[id].Photo != "" && (*p)[id].Nickname != "" && (*p)[id].Information != "" {
+				_, err = b.bot.Send(msg)
+			}
 			return err
 		}
 
@@ -260,7 +264,9 @@ func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 				ResizeKeyboard:  true,
 			}
 			msg.Caption = fmt.Sprintf("%s, %s", (*p)[id].Nickname, (*p)[id].Information)
-			_, err = b.bot.Send(msg)
+			if (*p)[id].Photo != "" && (*p)[id].Nickname != "" && (*p)[id].Information != "" {
+				_, err = b.bot.Send(msg)
+			}
 
 			return err
 		}
