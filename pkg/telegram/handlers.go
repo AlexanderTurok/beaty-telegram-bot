@@ -153,7 +153,8 @@ func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 
 		return err
 	case voter:
-		if value := b.getCache(message.From.ID); value == "" {
+		participantID := b.getCache(message.From.ID)
+		if participantID == "" {
 			err := b.setCache(message.From.ID, 0)
 			if err != nil {
 				return err
@@ -165,23 +166,31 @@ func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 			return err
 		}
 
-		id, _ := strconv.Atoi(b.getCache(message.From.ID)) // convert string to int
+		id, _ := strconv.Atoi(participantID) // convert string to int
 
-		msg := tgbotapi.NewPhotoShare(message.Chat.ID, (*p)[id].Photo)
-		msg.ReplyMarkup = tgbotapi.ReplyKeyboardMarkup{
-			Keyboard:        voteKeyboard.Keyboard,
-			OneTimeKeyboard: true,
-			ResizeKeyboard:  true,
-		}
-		msg.Caption = fmt.Sprintf("%s, %s", (*p)[id].Nickname, (*p)[id].Information)
+		if id > len(*p) {
+			msg := tgbotapi.NewMessage(message.Chat.ID, "You voted for all participants. Wait some time for new participants...")
+			_, err := b.bot.Send(msg)
+			if err != nil {
+				return err
+			}
+		} else {
+			msg := tgbotapi.NewPhotoShare(message.Chat.ID, (*p)[id].Photo)
+			msg.ReplyMarkup = tgbotapi.ReplyKeyboardMarkup{
+				Keyboard:        voteKeyboard.Keyboard,
+				OneTimeKeyboard: true,
+				ResizeKeyboard:  true,
+			}
+			msg.Caption = fmt.Sprintf("%s, %s", (*p)[id].Nickname, (*p)[id].Information)
+			_, err = b.bot.Send(msg)
+			if err != nil {
+				return err
+			}
 
-		_, err = b.bot.Send(msg)
-		if err != nil {
+			err = b.setCache(message.From.ID, (*p)[id].Id)
 			return err
 		}
-
-		err = b.setCache(message.From.ID, (*p)[id].Id)
-		return err
+		return nil
 	case like:
 		participantID := b.getCache(message.From.ID)
 		b.updateVotesInDB(participantID)
@@ -194,8 +203,7 @@ func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 		id, _ := strconv.Atoi(participantID)
 		id += 1
 
-		err = b.setCache(message.From.ID, id)
-		if err != nil {
+		if err := b.setCache(message.From.ID, id); err != nil {
 			return err
 		}
 
@@ -205,18 +213,20 @@ func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 			if err != nil {
 				return err
 			}
+		} else {
+			msg := tgbotapi.NewPhotoShare(message.Chat.ID, (*p)[id].Photo)
+			msg.ReplyMarkup = tgbotapi.ReplyKeyboardMarkup{
+				Keyboard:        voteKeyboard.Keyboard,
+				OneTimeKeyboard: true,
+				ResizeKeyboard:  true,
+			}
+			msg.Caption = fmt.Sprintf("%s, %s", (*p)[id].Nickname, (*p)[id].Information)
+			_, err = b.bot.Send(msg)
+
+			return err
 		}
 
-		msg := tgbotapi.NewPhotoShare(message.Chat.ID, (*p)[id].Photo)
-		msg.ReplyMarkup = tgbotapi.ReplyKeyboardMarkup{
-			Keyboard:        voteKeyboard.Keyboard,
-			OneTimeKeyboard: true,
-			ResizeKeyboard:  true,
-		}
-		msg.Caption = fmt.Sprintf("%s, %s", (*p)[id].Nickname, (*p)[id].Information)
-		_, err = b.bot.Send(msg)
-
-		return err
+		return nil
 	case dislike:
 		participantID := b.getCache(message.From.ID)
 
@@ -239,18 +249,19 @@ func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 			if err != nil {
 				return err
 			}
-		}
+		} else {
+			msg := tgbotapi.NewPhotoShare(message.Chat.ID, (*p)[id].Photo)
+			msg.ReplyMarkup = tgbotapi.ReplyKeyboardMarkup{
+				Keyboard:        voteKeyboard.Keyboard,
+				OneTimeKeyboard: true,
+				ResizeKeyboard:  true,
+			}
+			msg.Caption = fmt.Sprintf("%s, %s", (*p)[id].Nickname, (*p)[id].Information)
+			_, err = b.bot.Send(msg)
 
-		msg := tgbotapi.NewPhotoShare(message.Chat.ID, (*p)[id].Photo)
-		msg.ReplyMarkup = tgbotapi.ReplyKeyboardMarkup{
-			Keyboard:        voteKeyboard.Keyboard,
-			OneTimeKeyboard: true,
-			ResizeKeyboard:  true,
+			return err
 		}
-		msg.Caption = fmt.Sprintf("%s, %s", (*p)[id].Nickname, (*p)[id].Information)
-		_, err = b.bot.Send(msg)
-
-		return err
+		return nil
 	default:
 		msg := tgbotapi.NewMessage(message.Chat.ID, "unknown message...")
 		_, err := b.bot.Send(msg)
