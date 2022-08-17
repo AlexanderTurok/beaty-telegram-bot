@@ -2,6 +2,7 @@ package telegram
 
 import (
 	"fmt"
+	"strconv"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
@@ -53,6 +54,7 @@ var voteKeyboard = tgbotapi.NewReplyKeyboard(
 	tgbotapi.NewKeyboardButtonRow(
 		tgbotapi.NewKeyboardButton(like),
 		tgbotapi.NewKeyboardButton(dislike),
+		tgbotapi.NewKeyboardButton(back),
 	),
 )
 
@@ -114,7 +116,7 @@ func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 		err = b.setCache(message.From.ID, "description")
 		return err
 	case profile:
-		user, err := b.getParticipantFromDB(message.From.ID)
+		user, err := b.getParticipantFromDB("uuid", message.From.ID)
 		fmt.Println(user.Photo, user.Nickname, user.Information)
 		if err != nil {
 			return err
@@ -124,28 +126,6 @@ func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 		msg.Caption = fmt.Sprintf("%s, %s", user.Nickname, user.Information)
 		_, err = b.bot.Send(msg)
 
-		return err
-	case voter:
-		participants, err := b.getAllParticipantsFromDB()
-		if err != nil {
-			return err
-		}
-		fmt.Println(participants)
-
-		msg := tgbotapi.NewPhotoShare(message.Chat.ID, (*participants)[0].Photo)
-		msg.ReplyMarkup = tgbotapi.ReplyKeyboardMarkup{
-			Keyboard:        voteKeyboard.Keyboard,
-			OneTimeKeyboard: true,
-			ResizeKeyboard:  true,
-		}
-		msg.Caption = fmt.Sprintf("%s, %s", (*participants)[0].Nickname, (*participants)[0].Information)
-
-		_, err = b.bot.Send(msg)
-		if err != nil {
-			return err
-		}
-
-		err = b.setCache(message.From.ID, (*participants)[0].Uuid)
 		return err
 	case delete:
 		err := b.deleteParticipantFromDB(message.From.ID)
@@ -172,26 +152,104 @@ func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 		_, err := b.bot.Send(msg)
 
 		return err
-	case like:
-		user := b.getCache(message.From.ID)
-		b.updateVotesInDB(user)
+	case voter:
+		if value := b.getCache(message.From.ID); value == "" {
+			err := b.setCache(message.From.ID, 0)
+			if err != nil {
+				return err
+			}
+		}
 
-		msg := tgbotapi.NewMessage(message.Chat.ID, "you liked")
-		_, err := b.bot.Send(msg)
+		p, err := b.getAllParticipantsFromDB()
 		if err != nil {
 			return err
 		}
 
-		err = b.deleteCache(message.From.ID)
+		id, _ := strconv.Atoi(b.getCache(message.From.ID)) // convert string to int
+
+		msg := tgbotapi.NewPhotoShare(message.Chat.ID, (*p)[id].Photo)
+		msg.ReplyMarkup = tgbotapi.ReplyKeyboardMarkup{
+			Keyboard:        voteKeyboard.Keyboard,
+			OneTimeKeyboard: true,
+			ResizeKeyboard:  true,
+		}
+		msg.Caption = fmt.Sprintf("%s, %s", (*p)[id].Nickname, (*p)[id].Information)
+
+		_, err = b.bot.Send(msg)
+		if err != nil {
+			return err
+		}
+
+		err = b.setCache(message.From.ID, (*p)[id].Id)
+		return err
+	case like:
+		participantID := b.getCache(message.From.ID)
+		b.updateVotesInDB(participantID)
+
+		p, err := b.getAllParticipantsFromDB()
+		if err != nil {
+			return err
+		}
+
+		id, _ := strconv.Atoi(participantID)
+		id += 1
+
+		err = b.setCache(message.From.ID, id)
+		if err != nil {
+			return err
+		}
+
+		if id > len(*p) {
+			msg := tgbotapi.NewMessage(message.Chat.ID, "You voted for all participants. Wait some time for new participants...")
+			_, err := b.bot.Send(msg)
+			if err != nil {
+				return err
+			}
+		}
+
+		msg := tgbotapi.NewPhotoShare(message.Chat.ID, (*p)[id].Photo)
+		msg.ReplyMarkup = tgbotapi.ReplyKeyboardMarkup{
+			Keyboard:        voteKeyboard.Keyboard,
+			OneTimeKeyboard: true,
+			ResizeKeyboard:  true,
+		}
+		msg.Caption = fmt.Sprintf("%s, %s", (*p)[id].Nickname, (*p)[id].Information)
+		_, err = b.bot.Send(msg)
+
 		return err
 	case dislike:
-		msg := tgbotapi.NewMessage(message.Chat.ID, "you disliked")
-		_, err := b.bot.Send(msg)
+		participantID := b.getCache(message.From.ID)
+
+		p, err := b.getAllParticipantsFromDB()
 		if err != nil {
 			return err
 		}
 
-		err = b.deleteCache(message.From.ID)
+		id, _ := strconv.Atoi(participantID)
+		id += 1
+
+		err = b.setCache(message.From.ID, id)
+		if err != nil {
+			return err
+		}
+
+		if id > len(*p) {
+			msg := tgbotapi.NewMessage(message.Chat.ID, "You voted for all participants. Wait some time for new participants...")
+			_, err := b.bot.Send(msg)
+			if err != nil {
+				return err
+			}
+		}
+
+		msg := tgbotapi.NewPhotoShare(message.Chat.ID, (*p)[id].Photo)
+		msg.ReplyMarkup = tgbotapi.ReplyKeyboardMarkup{
+			Keyboard:        voteKeyboard.Keyboard,
+			OneTimeKeyboard: true,
+			ResizeKeyboard:  true,
+		}
+		msg.Caption = fmt.Sprintf("%s, %s", (*p)[id].Nickname, (*p)[id].Information)
+		_, err = b.bot.Send(msg)
+
 		return err
 	default:
 		msg := tgbotapi.NewMessage(message.Chat.ID, "unknown message...")
