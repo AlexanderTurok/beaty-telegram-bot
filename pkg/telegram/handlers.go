@@ -167,9 +167,6 @@ func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 		}
 
 		id, _ := strconv.Atoi(participantID) // convert string to int
-		if err := b.setCache(message.From.ID, id+1); err != nil {
-			return err
-		}
 
 		if id > len(*p) {
 			msg := tgbotapi.NewMessage(message.Chat.ID, "You voted for all participants. Wait some time for new participants...")
@@ -179,6 +176,10 @@ func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 				return err
 			}
 		} else {
+			if err := b.setCache(message.From.ID, id+1); err != nil {
+				return err
+			}
+
 			msg := tgbotapi.NewPhotoShare(message.Chat.ID, (*p)[id].Photo)
 			msg.ReplyMarkup = tgbotapi.ReplyKeyboardMarkup{
 				Keyboard:        voteKeyboard.Keyboard,
@@ -204,10 +205,6 @@ func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 		id, _ := strconv.Atoi(participantID)
 		id += 1
 
-		if err := b.setCache(message.From.ID, id); err != nil {
-			return err
-		}
-
 		if id > len(*p) {
 			msg := tgbotapi.NewMessage(message.Chat.ID, "You voted for all participants. Wait some time for new participants...")
 			msg.ReplyMarkup = roleKeyboard
@@ -216,6 +213,10 @@ func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 				return err
 			}
 		} else {
+			if err := b.setCache(message.From.ID, id); err != nil {
+				return err
+			}
+
 			msg := tgbotapi.NewPhotoShare(message.Chat.ID, (*p)[id].Photo)
 			msg.ReplyMarkup = tgbotapi.ReplyKeyboardMarkup{
 				Keyboard:        voteKeyboard.Keyboard,
@@ -240,11 +241,6 @@ func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 		id, _ := strconv.Atoi(participantID)
 		id += 1
 
-		err = b.setCache(message.From.ID, id)
-		if err != nil {
-			return err
-		}
-
 		if id > len(*p) {
 			msg := tgbotapi.NewMessage(message.Chat.ID, "You voted for all participants. Wait some time for new participants...")
 			msg.ReplyMarkup = roleKeyboard
@@ -253,6 +249,10 @@ func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 				return err
 			}
 		} else {
+			err = b.setCache(message.From.ID, id)
+			if err != nil {
+				return err
+			}
 			msg := tgbotapi.NewPhotoShare(message.Chat.ID, (*p)[id].Photo)
 			msg.ReplyMarkup = tgbotapi.ReplyKeyboardMarkup{
 				Keyboard:        voteKeyboard.Keyboard,
