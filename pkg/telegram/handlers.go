@@ -168,7 +168,7 @@ func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 
 		id, _ := strconv.Atoi(participantID) // convert string to int
 
-		if id > len(*p) {
+		if id >= len(*p) {
 			msg := tgbotapi.NewMessage(message.Chat.ID, "You voted for all participants. Wait some time for new participants...")
 			msg.ReplyMarkup = roleKeyboard
 			_, err := b.bot.Send(msg)
@@ -205,7 +205,7 @@ func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 		id, _ := strconv.Atoi(participantID)
 		id += 1
 
-		if id > len(*p) {
+		if id >= len(*p) {
 			msg := tgbotapi.NewMessage(message.Chat.ID, "You voted for all participants. Wait some time for new participants...")
 			msg.ReplyMarkup = roleKeyboard
 			_, err := b.bot.Send(msg)
@@ -241,7 +241,7 @@ func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 		id, _ := strconv.Atoi(participantID)
 		id += 1
 
-		if id > len(*p) {
+		if id >= len(*p) {
 			msg := tgbotapi.NewMessage(message.Chat.ID, "You voted for all participants. Wait some time for new participants...")
 			msg.ReplyMarkup = roleKeyboard
 			_, err := b.bot.Send(msg)
