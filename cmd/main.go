@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 
+	"github.com/AlexanderTurok/telegram-beaty-bot/pkg/bot"
 	"github.com/AlexanderTurok/telegram-beaty-bot/pkg/repository"
 	"github.com/AlexanderTurok/telegram-beaty-bot/pkg/service"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
@@ -56,5 +57,6 @@ func main() {
 func initConfig() error {
 	viper.AddConfigPath("configs")
 	viper.SetConfigName("config")
+
 	return viper.ReadInConfig()
 }
