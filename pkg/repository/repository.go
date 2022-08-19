@@ -9,27 +9,27 @@ import (
 )
 
 type ParticipantData interface {
-	GetParticipant(uuid string) (*telegram.Participant, error)
-	AddParticipant(uuid string) error
-	UpdateParticipant(column, value, uuid string) error
-	DeleteParticipant(uuid string) error
+	GetParticipant(uuid int) (*telegram.Participant, error)
+	AddParticipant(uuid int) error
+	UpdateParticipant(column, value string, uuid int) error
+	DeleteParticipant(uuid int) error
 }
 
 type ParticipantCache interface {
-	GetCache(uuid string) (string, error)
-	SetCache(uuid, value string) error
-	DeleteCache(uuid string) error
+	GetCache(uuid int) (string, error)
+	SetCache(uuid int, value string) error
+	DeleteCache(uuid int) error
 }
 
 type VoterData interface {
-	GetParticipant(uuid string) (*telegram.Participant, error)
-	UpdateParticipant(column, value, uuid string) error
+	GetParticipant(uuid int) (*telegram.Participant, error)
+	UpdateParticipant(column, value string, uuid int) error
 }
 
 type VoterCache interface {
-	GetCache(uuid string) (string, error)
-	SetCache(uuid, value string) error
-	DeleteCache(uuid string) error
+	GetCache(uuid int) (string, error)
+	SetCache(uuid int, value string) error
+	DeleteCache(uuid int) error
 }
 
 type Repository struct {

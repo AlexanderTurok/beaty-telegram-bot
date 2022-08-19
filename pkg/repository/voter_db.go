@@ -17,16 +17,16 @@ func NewVoterDB(db *sql.DB) *VoterDB {
 	}
 }
 
-func (v *VoterDB) GetParticipant(uuid string) (*telegram.Participant, error) {
+func (v *VoterDB) GetParticipant(uuid int) (*telegram.Participant, error) {
 	var p telegram.Participant
-	query := fmt.Sprintf("SELECT * FROM participants WHERE uuid=%s;", uuid)
+	query := fmt.Sprintf("SELECT * FROM participants WHERE uuid=%d;", uuid)
 	err := v.db.QueryRow(query).Scan(&p.Id, &p.Uuid, &p.Nickname, &p.Photo, &p.Information, &p.Votes)
 
 	return &p, err
 }
 
-func (v *VoterDB) UpdateParticipant(column, value, uuid string) error {
-	query := fmt.Sprintf("UPDATE participants SET %s='%s' WHERE uuid=%s", column, value, uuid)
+func (v *VoterDB) UpdateParticipant(column, value string, uuid int) error {
+	query := fmt.Sprintf("UPDATE participants SET %s='%s' WHERE uuid=%d", column, value, uuid)
 	_, err := v.db.Exec(query)
 
 	return err

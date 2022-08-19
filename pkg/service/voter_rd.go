@@ -14,14 +14,14 @@ func NewVoterRDService(repository *repository.Repository) *VoterRDService {
 	}
 }
 
-func (v *VoterRDService) SetCache(uuid string, value string) error {
+func (v *VoterRDService) SetCache(uuid int, value string) error {
 	return nil
 }
 
-func (v *VoterRDService) GetCache(uuid string) (string, error) {
+func (v *VoterRDService) GetCache(uuid int) (string, error) {
 	return "", nil
 }
 
-func (v *VoterRDService) DeleteCache(uuid string) error {
+func (v *VoterRDService) DeleteCache(uuid int) error {
 	return nil
 }

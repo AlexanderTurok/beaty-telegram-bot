@@ -15,18 +15,18 @@ func NewParticipantDBService(repository *repository.Repository) *ParticipantDBSe
 	}
 }
 
-func (p *ParticipantDBService) GetParticipant(uuid string) (*telegram.Participant, error) {
+func (p *ParticipantDBService) GetParticipant(uuid int) (*telegram.Participant, error) {
 	return nil, nil
 }
 
-func (p *ParticipantDBService) AddParticipant(uuid string) error {
+func (p *ParticipantDBService) AddParticipant(uuid int) error {
 	return nil
 }
 
-func (p *ParticipantDBService) UpdateParticipant(column, value, uuid string) error {
+func (p *ParticipantDBService) UpdateParticipant(column, value string, uuid int) error {
 	return nil
 }
 
-func (p *ParticipantDBService) DeleteParticipant(uuid string) error {
+func (p *ParticipantDBService) DeleteParticipant(uuid int) error {
 	return nil
 }

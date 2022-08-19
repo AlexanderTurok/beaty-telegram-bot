@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/go-redis/redis/v9"
 )
@@ -17,17 +18,17 @@ func NewVoterRD(context context.Context, redis *redis.Client) *VoterRD {
 	}
 }
 
-func (v *VoterRD) SetCache(uuid string, value string) error {
-	err := v.redis.Set(v.context, uuid, value, 0)
+func (v *VoterRD) SetCache(uuid int, value string) error {
+	err := v.redis.Set(v.context, fmt.Sprint(uuid), value, 0)
 	return err.Err()
 }
 
-func (v *VoterRD) GetCache(uuid string) (string, error) {
-	value, err := v.redis.Get(v.context, uuid).Result()
+func (v *VoterRD) GetCache(uuid int) (string, error) {
+	value, err := v.redis.Get(v.context, fmt.Sprint(uuid)).Result()
 	return value, err
 }
 
-func (v *VoterRD) DeleteCache(uuid string) error {
-	err := v.redis.Del(v.context, uuid)
+func (v *VoterRD) DeleteCache(uuid int) error {
+	err := v.redis.Del(v.context, fmt.Sprint(uuid))
 	return err.Err()
 }

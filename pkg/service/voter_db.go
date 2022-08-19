@@ -15,10 +15,10 @@ func NewVoterDBService(repository *repository.Repository) *VoterDBService {
 	}
 }
 
-func (v *VoterDBService) GetParticipant(uuid string) (*telegram.Participant, error) {
+func (v *VoterDBService) GetParticipant(uuid int) (*telegram.Participant, error) {
 	return nil, nil
 }
 
-func (v *VoterDBService) UpdateParticipant(uuid string) error {
+func (v *VoterDBService) UpdateParticipant(uuid int) error {
 	return nil
 }

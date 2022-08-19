@@ -14,14 +14,14 @@ func NewParticipantRDService(repository *repository.Repository) *ParticipantRDSe
 	}
 }
 
-func (p *ParticipantRDService) SetCache(uuid, value string) error {
+func (p *ParticipantRDService) SetCache(uuid int, value string) error {
 	return nil
 }
 
-func (p *ParticipantRDService) GetCache(uuid string) (string, error) {
+func (p *ParticipantRDService) GetCache(uuid int) (string, error) {
 	return "", nil
 }
 
-func (p *ParticipantRDService) DeleteCache(uuid string) error {
+func (p *ParticipantRDService) DeleteCache(uuid int) error {
 	return nil
 }
