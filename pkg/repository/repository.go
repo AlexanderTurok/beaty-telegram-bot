@@ -9,7 +9,9 @@ import (
 )
 
 type ParticipantData interface {
+	IsParticipant(uuid int) (bool, error)
 	GetParticipant(uuid int) (*telegram.Participant, error)
+	GetAllParticipants() (*[]telegram.Participant, error)
 	AddParticipant(uuid int) error
 	UpdateParticipant(column, value string, uuid int) error
 	DeleteParticipant(uuid int) error

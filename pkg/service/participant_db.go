@@ -15,7 +15,15 @@ func NewParticipantDBService(repository *repository.Repository) *ParticipantDBSe
 	}
 }
 
+func (p *ParticipantDBService) IsParticipant(uuid int) (bool, error) {
+	return false, nil
+}
+
 func (p *ParticipantDBService) GetParticipant(uuid int) (*telegram.Participant, error) {
+	return nil, nil
+}
+
+func (v *ParticipantDBService) GetAllParticipants() (*[]telegram.Participant, error) {
 	return nil, nil
 }
 
