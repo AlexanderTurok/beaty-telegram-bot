@@ -15,22 +15,10 @@ func (b *Bot) handleCache(message *tgbotapi.Message, value string) error {
 		err := b.handlePhoto(message)
 		return err
 	case "description":
-		if err := b.service.ParticipantCache.DeleteCache(message.From.ID); err != nil {
-			return err
-		}
-
-		err := b.service.ParticipantData.UpdateParticipant("information", message.Text, message.From.ID)
-		if err != nil {
-			return err
-		} else {
-			msg := tgbotapi.NewMessage(message.Chat.ID, "Your description successfully updated!")
-			msg.ReplyMarkup = registrationKeyboard
-			_, err := b.bot.Send(msg)
-			return err
-		}
+		err := b.handleDescription(message)
+		return err
 	default:
-		msg := tgbotapi.NewMessage(message.Chat.ID, "something went from with cache handler")
-		_, err := b.bot.Send(msg)
+		err := b.handleDefaultCache(message)
 		return err
 	}
 }
@@ -57,4 +45,23 @@ func (b *Bot) handlePhoto(message *tgbotapi.Message) error {
 	_, err := b.bot.Send(msg)
 
 	return fmt.Errorf("error in photo handler: %s", err)
+}
+
+func (b *Bot) handleDescription(message *tgbotapi.Message) error {
+	if err := b.service.Participant.SetDescription(message); err != nil {
+		return err
+	}
+
+	msg := tgbotapi.NewMessage(message.Chat.ID, "Your description successfully updated!")
+	msg.ReplyMarkup = registrationKeyboard
+	_, err := b.bot.Send(msg)
+
+	return fmt.Errorf("error in description handler: %s", err)
+}
+
+func (b *Bot) handleDefaultCache(message *tgbotapi.Message) error {
+	msg := tgbotapi.NewMessage(message.Chat.ID, "Error in cache handler. Contact with @alexander_turok.")
+	_, err := b.bot.Send(msg)
+
+	return fmt.Errorf("error in default-cache handler: %s", err)
 }

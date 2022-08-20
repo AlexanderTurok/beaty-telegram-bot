@@ -9,6 +9,7 @@ import (
 type Participant interface {
 	SetName(message *tgbotapi.Message) error
 	SetPhoto(message *tgbotapi.Message) error
+	SetDescription(message *tgbotapi.Message) error
 
 	IsParticipant(uuid int) (bool, error)
 	GetParticipant(uuid int) (*telegram.Participant, error)

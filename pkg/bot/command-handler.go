@@ -15,7 +15,7 @@ func (b *Bot) handleCommands(message *tgbotapi.Message) error {
 		err := b.handleSupport(message)
 		return err
 	default:
-		err := b.handleDefault(message)
+		err := b.handleDefaultCommand(message)
 		return err
 	}
 }
@@ -36,7 +36,7 @@ func (b *Bot) handleSupport(message *tgbotapi.Message) error {
 	return fmt.Errorf("error in support handler: %s", err)
 }
 
-func (b *Bot) handleDefault(message *tgbotapi.Message) error {
+func (b *Bot) handleDefaultCommand(message *tgbotapi.Message) error {
 	msg := tgbotapi.NewMessage(message.Chat.ID, "unknown command...")
 	_, err := b.bot.Send(msg)
 

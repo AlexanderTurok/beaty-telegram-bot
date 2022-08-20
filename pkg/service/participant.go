@@ -36,6 +36,15 @@ func (p *ParticipantService) SetPhoto(message *tgbotapi.Message) error {
 	return err
 }
 
+func (p *ParticipantService) SetDescription(message *tgbotapi.Message) error {
+	if err := p.repository.Participant.DeleteCache(message.From.ID); err != nil {
+		return err
+	}
+
+	err := p.repository.Participant.UpdateParticipant("information", message.Text, message.From.ID)
+	return err
+}
+
 func (p *ParticipantService) IsParticipant(uuid int) (bool, error) {
 	return false, nil
 }
