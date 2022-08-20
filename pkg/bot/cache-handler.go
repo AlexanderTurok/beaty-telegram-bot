@@ -12,19 +12,8 @@ func (b *Bot) handleCache(message *tgbotapi.Message, value string) error {
 		err := b.handleName(message)
 		return err
 	case "photo":
-		if err := b.service.ParticipantCache.DeleteCache(message.From.ID); err != nil {
-			return err
-		}
-
-		err := b.service.ParticipantData.UpdateParticipant("photo", (*message.Photo)[0].FileID, message.From.ID)
-		if err != nil {
-			return err
-		} else {
-			msg := tgbotapi.NewMessage(message.Chat.ID, "Your photo successfully updated!")
-			msg.ReplyMarkup = registrationKeyboard
-			_, err := b.bot.Send(msg)
-			return err
-		}
+		err := b.handlePhoto(message)
+		return err
 	case "description":
 		if err := b.service.ParticipantCache.DeleteCache(message.From.ID); err != nil {
 			return err
@@ -47,7 +36,7 @@ func (b *Bot) handleCache(message *tgbotapi.Message, value string) error {
 }
 
 func (b *Bot) handleName(message *tgbotapi.Message) error {
-	if err := b.service.Participant.SetParticipantName(message); err != nil {
+	if err := b.service.Participant.SetName(message); err != nil {
 		return err
 	}
 
@@ -56,4 +45,16 @@ func (b *Bot) handleName(message *tgbotapi.Message) error {
 	_, err := b.bot.Send(msg)
 
 	return fmt.Errorf("error in name handler: %s", err)
+}
+
+func (b *Bot) handlePhoto(message *tgbotapi.Message) error {
+	if err := b.service.Participant.SetPhoto(message); err != nil {
+		return err
+	}
+
+	msg := tgbotapi.NewMessage(message.Chat.ID, "Your photo successfully updated!")
+	msg.ReplyMarkup = registrationKeyboard
+	_, err := b.bot.Send(msg)
+
+	return fmt.Errorf("error in photo handler: %s", err)
 }

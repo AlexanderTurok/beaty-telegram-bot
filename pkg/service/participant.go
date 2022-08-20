@@ -16,12 +16,23 @@ func NewParticipantService(repository *repository.Repository) *ParticipantServic
 	}
 }
 
-func (p *ParticipantService) SetParticipantName(message *tgbotapi.Message) error {
+func (p *ParticipantService) SetName(message *tgbotapi.Message) error {
 	if err := p.repository.Participant.DeleteCache(message.From.ID); err != nil {
 		return err
 	}
 
 	err := p.repository.Participant.UpdateParticipant("nickname", message.Text, message.From.ID)
+	return err
+}
+
+func (p *ParticipantService) SetPhoto(message *tgbotapi.Message) error {
+	if err := p.repository.Participant.DeleteCache(message.From.ID); err != nil {
+		return err
+	}
+
+	fileID := (*message.Photo)[0].FileID
+	err := p.repository.Participant.UpdateParticipant("photo", fileID, message.From.ID)
+
 	return err
 }
 
