@@ -41,16 +41,14 @@ func (b *Bot) Start() {
 			continue
 		}
 
-		if value, _ := b.service.ParticipantCache.GetCache(update.Message.From.ID); value != "" {
-			err := b.handleCache(update.Message, value)
-			if err != nil {
+		if value, _ := b.service.Participant.GetCache(update.Message.From.ID); value != "" {
+			if err := b.handleCache(update.Message, value); err != nil {
 				log.Fatalf("error in cache handler: %s", err)
 			}
 			continue
 		}
 
-		err := b.handleMessages(update.Message)
-		if err != nil {
+		if err := b.handleMessages(update.Message); err != nil {
 			log.Fatalf("error in message handler: %s", err.Error())
 		}
 	}
