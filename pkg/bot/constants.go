@@ -4,7 +4,8 @@ import tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 
 const (
 	// command list
-	start = "start"
+	start   = "start"
+	support = "support"
 
 	// choose role
 	register = "Register!"
