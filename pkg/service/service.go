@@ -5,44 +5,34 @@ import (
 	"github.com/AlexanderTurok/telegram-beaty-bot/pkg/repository"
 )
 
-type ParticipantData interface {
+type Participant interface {
 	IsParticipant(uuid int) (bool, error)
 	GetParticipant(uuid int) (*telegram.Participant, error)
 	GetAllParticipants() (*[]telegram.Participant, error)
 	AddParticipant(uuid int) error
 	UpdateParticipant(column, value string, uuid int) error
 	DeleteParticipant(uuid int) error
-}
-
-type ParticipantCache interface {
 	GetCache(uuid int) (string, error)
 	SetCache(uuid int, value string) error
 	DeleteCache(uuid int) error
 }
 
-type VoterData interface {
+type Voter interface {
 	GetParticipant(uuid int) (*telegram.Participant, error)
 	UpdateParticipant(uuid int) error
-}
-
-type VoterCache interface {
 	GetCache(uuid int) (string, error)
 	SetCache(uuid int, value string) error
 	DeleteCache(uuid int) error
 }
 
 type Service struct {
-	ParticipantData
-	ParticipantCache
-	VoterData
-	VoterCache
+	Participant
+	Voter
 }
 
 func NewService(repository *repository.Repository) *Service {
 	return &Service{
-		ParticipantData:  NewParticipantDBService(repository),
-		ParticipantCache: NewParticipantRDService(repository),
-		VoterData:        NewVoterDBService(repository),
-		VoterCache:       NewVoterRDService(repository),
+		Participant: NewParticipantService(repository),
+		Voter:       NewVoterService(repository),
 	}
 }
