@@ -1,8 +1,8 @@
 CREATE TABLE participants (
   id BIGSERIAL NOT NULL PRIMARY KEY,
   uuid BIGINT UNIQUE,
-  nickname VARCHAR,
+  name VARCHAR,
   photo VARCHAR,
-  information VARCHAR,
+  description VARCHAR,
   votes INT DEFAULT(0)
 );
