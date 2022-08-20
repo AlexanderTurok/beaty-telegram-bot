@@ -3,9 +3,12 @@ package service
 import (
 	"github.com/AlexanderTurok/telegram-beaty-bot"
 	"github.com/AlexanderTurok/telegram-beaty-bot/pkg/repository"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
 type Participant interface {
+	SetParticipantName(message *tgbotapi.Message) error
+
 	IsParticipant(uuid int) (bool, error)
 	GetParticipant(uuid int) (*telegram.Participant, error)
 	GetAllParticipants() (*[]telegram.Participant, error)

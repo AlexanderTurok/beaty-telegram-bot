@@ -3,6 +3,7 @@ package service
 import (
 	"github.com/AlexanderTurok/telegram-beaty-bot"
 	"github.com/AlexanderTurok/telegram-beaty-bot/pkg/repository"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
 type ParticipantService struct {
@@ -13,6 +14,15 @@ func NewParticipantService(repository *repository.Repository) *ParticipantServic
 	return &ParticipantService{
 		repository: repository,
 	}
+}
+
+func (p *ParticipantService) SetParticipantName(message *tgbotapi.Message) error {
+	if err := p.repository.Participant.DeleteCache(message.From.ID); err != nil {
+		return err
+	}
+
+	err := p.repository.Participant.UpdateParticipant("nickname", message.Text, message.From.ID)
+	return err
 }
 
 func (p *ParticipantService) IsParticipant(uuid int) (bool, error) {

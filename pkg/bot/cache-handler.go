@@ -1,23 +1,16 @@
 package bot
 
-import tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+import (
+	"fmt"
+
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+)
 
 func (b *Bot) handleCache(message *tgbotapi.Message, value string) error {
 	switch value {
 	case "name":
-		if err := b.service.ParticipantCache.DeleteCache(message.From.ID); err != nil {
-			return err
-		}
-
-		err := b.service.ParticipantData.UpdateParticipant("nickname", message.Text, message.From.ID)
-		if err != nil {
-			return err
-		} else {
-			msg := tgbotapi.NewMessage(message.Chat.ID, "Your name successfully updated!")
-			msg.ReplyMarkup = registrationKeyboard
-			_, err := b.bot.Send(msg)
-			return err
-		}
+		err := b.handleName(message)
+		return err
 	case "photo":
 		if err := b.service.ParticipantCache.DeleteCache(message.From.ID); err != nil {
 			return err
@@ -51,4 +44,16 @@ func (b *Bot) handleCache(message *tgbotapi.Message, value string) error {
 		_, err := b.bot.Send(msg)
 		return err
 	}
+}
+
+func (b *Bot) handleName(message *tgbotapi.Message) error {
+	if err := b.service.Participant.SetParticipantName(message); err != nil {
+		return err
+	}
+
+	msg := tgbotapi.NewMessage(message.Chat.ID, "Your name successfully updated!")
+	msg.ReplyMarkup = registrationKeyboard
+	_, err := b.bot.Send(msg)
+
+	return fmt.Errorf("error in name handler: %s", err)
 }
