@@ -90,7 +90,6 @@ func (b *Bot) deleteProfile(message *tgbotapi.Message) error {
 	return fmt.Errorf("error while deleting profile: %s", err)
 }
 
-// FIXME: delete cache for voter too
 func (b *Bot) back(message *tgbotapi.Message) error {
 	if err := b.service.Participant.DeleteCache(message.From.ID); err != nil {
 		return err
