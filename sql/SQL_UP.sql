@@ -10,6 +10,6 @@ CREATE TABLE participants (
 CREATE TABLE voters (
   id BIGSERIAL NOT NULL PRIMARY KEY,
   uuid BIGINT UNIQUE,
-  liked_participants BIGINT [],
-  FOREIGN KEY liked_participants REFERENCES participants(uuid)
+  participants BIGINT,
+  FOREIGN KEY (participants) REFERENCES participants(uuid)
 );
