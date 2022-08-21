@@ -1,6 +1,7 @@
 package telegram
 
 type Voter struct {
-	Uuid         string
-	Participants *[]Participant
+	Id                int            `db:"id"`
+	Uuid              int            `db:"uuid"`
+	LikedParticipants *[]Participant `db:"liked_participants"`
 }
