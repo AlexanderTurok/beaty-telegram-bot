@@ -35,21 +35,16 @@ func (v *VoterService) GetID(message *tgbotapi.Message) (int, error) {
 }
 
 func (v *VoterService) GetParticipant(uuid int) (*telegram.Participant, error) {
-	return nil, nil
-}
-
-func (v *VoterService) UpdateParticipant(uuid int) error {
-	return nil
+	participant, err := v.repository.Voter.GetParticipant(uuid)
+	return participant, err
 }
 
 func (v *VoterService) SetCache(uuid int, value string) error {
-	return nil
+	err := v.repository.Voter.SetCache(uuid, value)
+	return err
 }
 
 func (v *VoterService) GetCache(uuid int) (string, error) {
-	return "", nil
-}
-
-func (v *VoterService) DeleteCache(uuid int) error {
-	return nil
+	cache, err := v.repository.Voter.GetCache(uuid)
+	return cache, err
 }
