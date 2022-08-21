@@ -31,13 +31,6 @@ func (v *VoterRepository) GetParticipant(uuid int) (*telegram.Participant, error
 	return &p, err
 }
 
-func (v *VoterRepository) UpdateParticipant(column, value string, uuid int) error {
-	query := fmt.Sprintf("UPDATE participants SET %s='%s' WHERE uuid=%d", column, value, uuid)
-	_, err := v.db.Exec(query)
-
-	return err
-}
-
 func (v *VoterRepository) SetCache(uuid int, value string) error {
 	err := v.redis.Set(v.context, fmt.Sprint(uuid), value, 0)
 	return err.Err()
@@ -46,9 +39,4 @@ func (v *VoterRepository) SetCache(uuid int, value string) error {
 func (v *VoterRepository) GetCache(uuid int) (string, error) {
 	value, err := v.redis.Get(v.context, fmt.Sprint(uuid)).Result()
 	return value, err
-}
-
-func (v *VoterRepository) DeleteCache(uuid int) error {
-	err := v.redis.Del(v.context, fmt.Sprint(uuid))
-	return err.Err()
 }

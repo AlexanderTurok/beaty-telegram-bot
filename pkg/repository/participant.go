@@ -7,7 +7,6 @@ import (
 
 	"github.com/AlexanderTurok/telegram-beaty-bot"
 	"github.com/go-redis/redis/v9"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
 type ParticipantRepository struct {
@@ -22,10 +21,6 @@ func NewParticipantRepository(context context.Context, db *sql.DB, redis *redis.
 		db:      db,
 		redis:   redis,
 	}
-}
-
-func (p *ParticipantRepository) SetParticipantName(message *tgbotapi.Message) error {
-	return nil
 }
 
 func (p *ParticipantRepository) IsParticipant(uuid int) (bool, error) {
