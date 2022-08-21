@@ -45,12 +45,25 @@ func (p *ParticipantService) SetDescription(message *tgbotapi.Message) error {
 	return err
 }
 
+func (p *ParticipantService) Register(message *tgbotapi.Message) error {
+	exists, err := p.repository.Participant.IsParticipant(message.From.ID)
+	if !exists {
+		if err := p.repository.Participant.AddParticipant(message.From.ID); err != nil {
+			return err
+		}
+	}
+
+	return err
+}
+
 func (p *ParticipantService) IsParticipant(uuid int) (bool, error) {
-	return false, nil
+	exists, err := p.repository.IsParticipant(uuid)
+	return exists, err
 }
 
 func (p *ParticipantService) GetParticipant(uuid int) (*telegram.Participant, error) {
-	return nil, nil
+	participant, err := p.repository.Participant.GetParticipant(uuid)
+	return participant, err
 }
 
 func (v *ParticipantService) GetAllParticipants() (*[]telegram.Participant, error) {

@@ -10,6 +10,7 @@ type Participant interface {
 	SetName(message *tgbotapi.Message) error
 	SetPhoto(message *tgbotapi.Message) error
 	SetDescription(message *tgbotapi.Message) error
+	Register(message *tgbotapi.Message) error
 
 	IsParticipant(uuid int) (bool, error)
 	GetParticipant(uuid int) (*telegram.Participant, error)
@@ -28,6 +29,8 @@ type Voter interface {
 	GetCache(uuid int) (string, error)
 	SetCache(uuid int, value string) error
 	DeleteCache(uuid int) error
+
+	GetID(message *tgbotapi.Message) (int, error)
 }
 
 type Service struct {

@@ -9,13 +9,13 @@ import (
 func (b *Bot) handleCache(message *tgbotapi.Message, value string) error {
 	switch value {
 	case "name":
-		err := b.handleName(message)
+		err := b.setName(message)
 		return err
 	case "photo":
-		err := b.handlePhoto(message)
+		err := b.setPhoto(message)
 		return err
 	case "description":
-		err := b.handleDescription(message)
+		err := b.setDescription(message)
 		return err
 	default:
 		err := b.handleDefaultCache(message)
@@ -23,7 +23,7 @@ func (b *Bot) handleCache(message *tgbotapi.Message, value string) error {
 	}
 }
 
-func (b *Bot) handleName(message *tgbotapi.Message) error {
+func (b *Bot) setName(message *tgbotapi.Message) error {
 	if err := b.service.Participant.SetName(message); err != nil {
 		return err
 	}
@@ -32,10 +32,10 @@ func (b *Bot) handleName(message *tgbotapi.Message) error {
 	msg.ReplyMarkup = registrationKeyboard
 	_, err := b.bot.Send(msg)
 
-	return fmt.Errorf("error in name handler: %s", err)
+	return fmt.Errorf("error while setting name handler: %s", err)
 }
 
-func (b *Bot) handlePhoto(message *tgbotapi.Message) error {
+func (b *Bot) setPhoto(message *tgbotapi.Message) error {
 	if err := b.service.Participant.SetPhoto(message); err != nil {
 		return err
 	}
@@ -44,10 +44,10 @@ func (b *Bot) handlePhoto(message *tgbotapi.Message) error {
 	msg.ReplyMarkup = registrationKeyboard
 	_, err := b.bot.Send(msg)
 
-	return fmt.Errorf("error in photo handler: %s", err)
+	return fmt.Errorf("error while setting photo handler: %s", err)
 }
 
-func (b *Bot) handleDescription(message *tgbotapi.Message) error {
+func (b *Bot) setDescription(message *tgbotapi.Message) error {
 	if err := b.service.Participant.SetDescription(message); err != nil {
 		return err
 	}
@@ -56,7 +56,7 @@ func (b *Bot) handleDescription(message *tgbotapi.Message) error {
 	msg.ReplyMarkup = registrationKeyboard
 	_, err := b.bot.Send(msg)
 
-	return fmt.Errorf("error in description handler: %s", err)
+	return fmt.Errorf("error while setting description handler: %s", err)
 }
 
 func (b *Bot) handleDefaultCache(message *tgbotapi.Message) error {
