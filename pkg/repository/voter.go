@@ -7,6 +7,7 @@ import (
 
 	"github.com/AlexanderTurok/telegram-beaty-bot"
 	"github.com/go-redis/redis/v9"
+	_ "github.com/lib/pq"
 )
 
 type VoterRepository struct {

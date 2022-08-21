@@ -42,7 +42,7 @@ func (b *Bot) handleRegistration(message *tgbotapi.Message) error {
 	msg.ReplyMarkup = registrationKeyboard
 	_, err := b.bot.Send(msg)
 
-	return fmt.Errorf("error in registration handler: %s", err)
+	return err
 }
 
 func (b *Bot) getName(message *tgbotapi.Message) error {
@@ -53,7 +53,7 @@ func (b *Bot) getName(message *tgbotapi.Message) error {
 	msg := tgbotapi.NewMessage(message.Chat.ID, "Send your name visible to others")
 	_, err := b.bot.Send(msg)
 
-	return fmt.Errorf("error while getting name: %s", err)
+	return err
 }
 
 func (b *Bot) getPhoto(message *tgbotapi.Message) error {
@@ -64,7 +64,7 @@ func (b *Bot) getPhoto(message *tgbotapi.Message) error {
 	msg := tgbotapi.NewMessage(message.Chat.ID, "Waiting for you photo...")
 	_, err := b.bot.Send(msg)
 
-	return fmt.Errorf("error while getting photo: %s", err)
+	return err
 }
 
 func (b *Bot) getDescription(message *tgbotapi.Message) error {
@@ -75,7 +75,7 @@ func (b *Bot) getDescription(message *tgbotapi.Message) error {
 	msg := tgbotapi.NewMessage(message.Chat.ID, "Describe yourself")
 	_, err := b.bot.Send(msg)
 
-	return fmt.Errorf("error while getting description: %s", err)
+	return err
 }
 
 func (b *Bot) deleteProfile(message *tgbotapi.Message) error {
@@ -87,7 +87,7 @@ func (b *Bot) deleteProfile(message *tgbotapi.Message) error {
 	msg.ReplyMarkup = roleKeyboard
 	_, err := b.bot.Send(msg)
 
-	return fmt.Errorf("error while deleting profile: %s", err)
+	return err
 }
 
 func (b *Bot) back(message *tgbotapi.Message) error {
@@ -99,7 +99,7 @@ func (b *Bot) back(message *tgbotapi.Message) error {
 	msg.ReplyMarkup = roleKeyboard
 	_, err := b.bot.Send(msg)
 
-	return fmt.Errorf("error while handle back: %s", err)
+	return err
 }
 
 func (b *Bot) handleVote(message *tgbotapi.Message) error {
@@ -120,8 +120,12 @@ func (b *Bot) handleVote(message *tgbotapi.Message) error {
 			return err
 		}
 
-		return b.getProfile((*p)[id].Id, message, true)
+		if err := b.getProfile((*p)[id].Id, message, true); err != nil {
+			return err
+		}
 	}
+
+	return nil
 }
 
 func (b *Bot) handleLike(message *tgbotapi.Message) error {
@@ -149,7 +153,7 @@ func (b *Bot) handleLike(message *tgbotapi.Message) error {
 		}
 
 		if err := b.getProfile((*p)[id].Id, message, true); err != nil {
-			return fmt.Errorf("error while handling like: %s", err)
+			return err
 		}
 	}
 
@@ -177,7 +181,7 @@ func (b *Bot) handleDislike(message *tgbotapi.Message) error {
 		}
 
 		if err := b.getProfile((*p)[id].Id, message, true); err != nil {
-			return fmt.Errorf("error while handling dislike: %s", err)
+			return err
 		}
 	}
 
@@ -188,7 +192,7 @@ func (b *Bot) handleDefaultMessage(message *tgbotapi.Message) error {
 	msg := tgbotapi.NewMessage(message.Chat.ID, "unknown message...")
 	_, err := b.bot.Send(msg)
 
-	return fmt.Errorf("error while handling default message: %s", err)
+	return err
 }
 
 func (b *Bot) handleEndOfParticipants(message *tgbotapi.Message) error {
@@ -196,7 +200,7 @@ func (b *Bot) handleEndOfParticipants(message *tgbotapi.Message) error {
 	msg.ReplyMarkup = roleKeyboard
 	_, err := b.bot.Send(msg)
 
-	return fmt.Errorf("error while handling end of participants: %s", err)
+	return err
 }
 
 func (b *Bot) getProfile(participantID int, message *tgbotapi.Message, showKeyboard bool) error {
@@ -218,5 +222,5 @@ func (b *Bot) getProfile(participantID int, message *tgbotapi.Message, showKeybo
 		_, err = b.bot.Send(msg)
 	}
 
-	return fmt.Errorf("error while getting profile: %s", err)
+	return err
 }

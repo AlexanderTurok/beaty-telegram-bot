@@ -1,8 +1,6 @@
 package bot
 
 import (
-	"fmt"
-
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
@@ -32,7 +30,7 @@ func (b *Bot) setName(message *tgbotapi.Message) error {
 	msg.ReplyMarkup = registrationKeyboard
 	_, err := b.bot.Send(msg)
 
-	return fmt.Errorf("error while setting name handler: %s", err)
+	return err
 }
 
 func (b *Bot) setPhoto(message *tgbotapi.Message) error {
@@ -44,7 +42,7 @@ func (b *Bot) setPhoto(message *tgbotapi.Message) error {
 	msg.ReplyMarkup = registrationKeyboard
 	_, err := b.bot.Send(msg)
 
-	return fmt.Errorf("error while setting photo handler: %s", err)
+	return err
 }
 
 func (b *Bot) setDescription(message *tgbotapi.Message) error {
@@ -56,12 +54,12 @@ func (b *Bot) setDescription(message *tgbotapi.Message) error {
 	msg.ReplyMarkup = registrationKeyboard
 	_, err := b.bot.Send(msg)
 
-	return fmt.Errorf("error while setting description handler: %s", err)
+	return err
 }
 
 func (b *Bot) handleDefaultCache(message *tgbotapi.Message) error {
 	msg := tgbotapi.NewMessage(message.Chat.ID, "Error in cache handler. Contact with @alexander_turok.")
 	_, err := b.bot.Send(msg)
 
-	return fmt.Errorf("error in default-cache handler: %s", err)
+	return err
 }
