@@ -22,10 +22,8 @@ type Participant interface {
 
 type Voter interface {
 	GetParticipant(uuid int) (*telegram.Participant, error)
-	UpdateParticipant(column, value string, uuid int) error
 	GetCache(uuid int) (string, error)
 	SetCache(uuid int, value string) error
-	DeleteCache(uuid int) error
 }
 
 type Repository struct {
