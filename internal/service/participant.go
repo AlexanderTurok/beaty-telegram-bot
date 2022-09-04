@@ -50,14 +50,26 @@ func (s *ParticipantService) GetDescription(uuid int64, description string) erro
 }
 
 func (s *ParticipantService) SetName(uuid int64, name string) error {
+	if err := s.repository.DeleteCache(fmt.Sprint(uuid)); err != nil {
+		return err
+	}
+
 	return s.repository.SetName(uuid, name)
 }
 
 func (s *ParticipantService) SetPhoto(uuid int64, photo string) error {
+	if err := s.repository.DeleteCache(fmt.Sprint(uuid)); err != nil {
+		return err
+	}
+
 	return s.repository.SetPhoto(uuid, photo)
 }
 
 func (s *ParticipantService) SetDescription(uuid int64, description string) error {
+	if err := s.repository.DeleteCache(fmt.Sprint(uuid)); err != nil {
+		return err
+	}
+
 	return s.repository.SetDescription(uuid, description)
 }
 
