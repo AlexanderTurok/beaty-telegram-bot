@@ -40,7 +40,7 @@ func (b *Bot) Start() {
 			continue
 		}
 
-		if value, _ := b.service.Participant.GetCache(update.Message.From.ID); value != "" {
+		if value, _ := b.service.Participant.GetCache(update.Message.Chat.ID); value != "" {
 			if err := b.handleCache(update.Message, value); err != nil {
 				logrus.Errorf("error in cache handler: %s", err)
 			}

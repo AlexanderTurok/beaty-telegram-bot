@@ -6,13 +6,13 @@ import (
 
 func (b *Bot) handleCache(message *tgbotapi.Message, value string) error {
 	switch value {
-	case "name":
+	case nameCache:
 		err := b.setName(message)
 		return err
-	case "photo":
+	case photoCache:
 		err := b.setPhoto(message)
 		return err
-	case "description":
+	case descriptionCache:
 		err := b.setDescription(message)
 		return err
 	default:
@@ -22,7 +22,7 @@ func (b *Bot) handleCache(message *tgbotapi.Message, value string) error {
 }
 
 func (b *Bot) setName(message *tgbotapi.Message) error {
-	if err := b.service.Participant.SetName(message); err != nil {
+	if err := b.service.Participant.SetName(message.Chat.ID, message.Text); err != nil {
 		return err
 	}
 
@@ -34,7 +34,8 @@ func (b *Bot) setName(message *tgbotapi.Message) error {
 }
 
 func (b *Bot) setPhoto(message *tgbotapi.Message) error {
-	if err := b.service.Participant.SetPhoto(message); err != nil {
+	photoId := (*message.Photo)[0].FileID
+	if err := b.service.Participant.SetPhoto(message.Chat.ID, photoId); err != nil {
 		return err
 	}
 
@@ -46,7 +47,7 @@ func (b *Bot) setPhoto(message *tgbotapi.Message) error {
 }
 
 func (b *Bot) setDescription(message *tgbotapi.Message) error {
-	if err := b.service.Participant.SetDescription(message); err != nil {
+	if err := b.service.Participant.SetDescription(message.Chat.ID, message.Text); err != nil {
 		return err
 	}
 

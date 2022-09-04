@@ -3,25 +3,26 @@ package service
 import (
 	"github.com/AlexanderTurok/telegram-beaty-bot/internal/repository"
 	telegram "github.com/AlexanderTurok/telegram-beaty-bot/pkg"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
 type Participant interface {
-	SetName(message *tgbotapi.Message) error
-	SetPhoto(message *tgbotapi.Message) error
-	SetDescription(message *tgbotapi.Message) error
-	Create(message *tgbotapi.Message) error
-	GetParticipant(uuid int) (telegram.Participant, error)
-	GetAllParticipants() ([]telegram.Participant, error)
-	UpdateParticipant(column, value string, uuid int) error
-	DeleteParticipant(uuid int) error
-	GetCache(uuid int) (string, error)
-	SetCache(uuid int, value string) error
-	DeleteCache(uuid int) error
+	Register(uuid int64) error
+	Get(uuid int64) (telegram.Participant, error)
+	Delete(uuid int64) error
+
+	GetName(uuid int64, name string) error
+	GetPhoto(uuid int64, photo string) error
+	GetDescription(uuid int64, description string) error
+
+	SetName(uuid int64, name string) error
+	SetPhoto(uuid int64, photo string) error
+	SetDescription(uuid int64, description string) error
+
+	GetCache(uuid int64) (string, error)
+	DeleteCache(uuid int64) error
 }
 
 type Voter interface {
-	GetParticipant(uuid int) (telegram.Participant, error)
 }
 
 type Service struct {
@@ -31,7 +32,7 @@ type Service struct {
 
 func NewService(repository *repository.Repository) *Service {
 	return &Service{
-		Participant: NewParticipantService(repository),
-		Voter:       NewVoterService(repository),
+		Participant: NewParticipantService(repository.Participant),
+		Voter:       NewVoterService(repository.Voter),
 	}
 }

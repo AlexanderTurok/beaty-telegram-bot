@@ -1,97 +1,70 @@
 package service
 
 import (
+	"fmt"
+
 	"github.com/AlexanderTurok/telegram-beaty-bot/internal/repository"
 	telegram "github.com/AlexanderTurok/telegram-beaty-bot/pkg"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
 type ParticipantService struct {
-	repository *repository.Repository
+	repository repository.Participant
 }
 
-func NewParticipantService(repository *repository.Repository) *ParticipantService {
+func NewParticipantService(repository repository.Participant) *ParticipantService {
 	return &ParticipantService{
 		repository: repository,
 	}
 }
 
-func (p *ParticipantService) SetName(message *tgbotapi.Message) error {
-	if err := p.repository.Participant.DeleteCache(message.From.ID); err != nil {
+func (s *ParticipantService) Register(uuid int64) error {
+	exists, err := s.repository.IsExists(uuid)
+	if err != nil {
 		return err
 	}
-
-	err := p.repository.Participant.UpdateParticipant("name", message.Text, message.From.ID)
-	return err
-}
-
-func (p *ParticipantService) SetPhoto(message *tgbotapi.Message) error {
-	if err := p.repository.Participant.DeleteCache(message.From.ID); err != nil {
-		return err
-	}
-
-	fileID := (*message.Photo)[0].FileID
-	err := p.repository.Participant.UpdateParticipant("photo", fileID, message.From.ID)
-
-	return err
-}
-
-func (p *ParticipantService) SetDescription(message *tgbotapi.Message) error {
-	if err := p.repository.Participant.DeleteCache(message.From.ID); err != nil {
-		return err
-	}
-
-	err := p.repository.Participant.UpdateParticipant("description", message.Text, message.From.ID)
-	return err
-}
-
-func (p *ParticipantService) Create(message *tgbotapi.Message) error {
-	exists, err := p.repository.Participant.IsExists(message.From.ID)
 	if !exists {
-		if err := p.repository.Participant.Create(message.From.ID); err != nil {
-			return err
-		}
+		return s.repository.Register(uuid)
 	}
 
-	return err
+	return nil
 }
 
-func (p *ParticipantService) IsExists(uuid int) (bool, error) {
-	exists, err := p.repository.Participant.IsExists(uuid)
-	return exists, err
+func (s *ParticipantService) Get(uuid int64) (telegram.Participant, error) {
+	return s.repository.Get(uuid)
 }
 
-func (p *ParticipantService) GetParticipant(uuid int) (telegram.Participant, error) {
-	participant, err := p.repository.Participant.GetParticipant(uuid)
-	return participant, err
+func (s *ParticipantService) Delete(uuid int64) error {
+	return s.repository.Delete(uuid)
 }
 
-func (v *ParticipantService) GetAllParticipants() ([]telegram.Participant, error) {
-	participants, err := v.repository.Participant.GetAllParticipants()
-	return participants, err
+func (s *ParticipantService) GetName(uuid int64, name string) error {
+	return s.repository.GetName(fmt.Sprint(uuid), name)
 }
 
-func (p *ParticipantService) UpdateParticipant(column, value string, uuid int) error {
-	err := p.repository.Participant.UpdateParticipant(column, value, uuid)
-	return err
+func (s *ParticipantService) GetPhoto(uuid int64, photo string) error {
+	return s.repository.GetPhoto(fmt.Sprint(uuid), photo)
 }
 
-func (p *ParticipantService) DeleteParticipant(uuid int) error {
-	err := p.repository.Participant.DeleteParticipant(uuid)
-	return err
+func (s *ParticipantService) GetDescription(uuid int64, description string) error {
+	return s.repository.GetDescription(fmt.Sprint(uuid), description)
 }
 
-func (p *ParticipantService) SetCache(uuid int, value string) error {
-	err := p.repository.Participant.SetCache(uuid, value)
-	return err
+func (s *ParticipantService) SetName(uuid int64, name string) error {
+	return s.repository.SetName(uuid, name)
 }
 
-func (p *ParticipantService) GetCache(uuid int) (string, error) {
-	cache, err := p.repository.Participant.GetCache(uuid)
-	return cache, err
+func (s *ParticipantService) SetPhoto(uuid int64, photo string) error {
+	return s.repository.SetPhoto(uuid, photo)
 }
 
-func (p *ParticipantService) DeleteCache(uuid int) error {
-	err := p.repository.Participant.DeleteCache(uuid)
-	return err
+func (s *ParticipantService) SetDescription(uuid int64, description string) error {
+	return s.repository.SetDescription(uuid, description)
+}
+
+func (s *ParticipantService) GetCache(uuid int64) (string, error) {
+	return s.repository.GetCache(fmt.Sprint(uuid))
+}
+
+func (s *ParticipantService) DeleteCache(uuid int64) error {
+	return s.repository.DeleteCache(fmt.Sprint(uuid))
 }

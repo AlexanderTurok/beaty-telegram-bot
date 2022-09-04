@@ -19,6 +19,11 @@ const (
 	delete      = "Delete my Profile!"
 	back        = "🔙"
 
+	// cache
+	nameCache        = "name"
+	photoCache       = "photo"
+	descriptionCache = "description"
+
 	// votes
 	like    = "👍"
 	dislike = "👎"

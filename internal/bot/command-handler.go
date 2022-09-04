@@ -7,14 +7,11 @@ import (
 func (b *Bot) handleCommands(message *tgbotapi.Message) error {
 	switch message.Command() {
 	case start:
-		err := b.handleStart(message)
-		return err
+		return b.handleStart(message)
 	case support:
-		err := b.handleSupport(message)
-		return err
+		return b.handleSupport(message)
 	default:
-		err := b.handleDefaultCommand(message)
-		return err
+		return b.handleDefaultCommand(message)
 	}
 }
 
