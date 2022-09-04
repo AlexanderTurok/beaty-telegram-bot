@@ -42,7 +42,13 @@ func (r *ParticipantRepository) IsExists(uuid int64) (bool, error) {
 func (r *ParticipantRepository) Get(uuid int64) (telegram.Participant, error) {
 	var participant telegram.Participant
 	query := fmt.Sprintf("SELECT * FROM %s WHERE uuid=$1", participantTable)
-	err := r.db.QueryRow(query, uuid).Scan(&participant)
+	err := r.db.QueryRow(query, uuid).Scan(
+		&participant.Uuid,
+		&participant.Name,
+		&participant.Photo,
+		&participant.Description,
+		&participant.Likes,
+	)
 
 	return participant, err
 }
@@ -70,29 +76,29 @@ func (r *ParticipantRepository) GetDescription(uuid, description string) error {
 }
 
 func (r *ParticipantRepository) SetName(uuid int64, name string) error {
-	query := fmt.Sprintf("INSERT INTO %s (name) VALUES ($1) WHERE uuid=$2", participantTable)
+	query := fmt.Sprintf("UPDATE %s SET name=$1 WHERE uuid=$2", participantTable)
 	_, err := r.db.Exec(query, name, uuid)
 
 	return err
 }
 
 func (r *ParticipantRepository) SetPhoto(uuid int64, photo string) error {
-	query := fmt.Sprintf("INSERT INTO %s (photo) VALUES ($1) WHERE uuid=$2", participantTable)
+	query := fmt.Sprintf("UPDATE %s SET photo=$1 WHERE uuid=$2", participantTable)
 	_, err := r.db.Exec(query, photo, uuid)
 
 	return err
 }
 
 func (r *ParticipantRepository) SetDescription(uuid int64, description string) error {
-	query := fmt.Sprintf("INSERT INTO %s (description) VALUES ($1) WHERE uuid=$2", participantTable)
+	query := fmt.Sprintf("UPDATE %s SET description=$1 WHERE uuid=$2", participantTable)
 	_, err := r.db.Exec(query, description, uuid)
 
 	return err
 }
 
 func (r *ParticipantRepository) GetCache(uuid string) (string, error) {
-	value := r.redis.Get(r.context, uuid)
-	return value.String(), value.Err()
+	value, err := r.redis.Get(r.context, uuid).Result()
+	return value, err
 }
 
 func (r *ParticipantRepository) DeleteCache(uuid string) error {
