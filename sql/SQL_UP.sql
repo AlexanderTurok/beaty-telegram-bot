@@ -1,15 +1,15 @@
-CREATE TABLE participants (
-  id BIGSERIAL NOT NULL PRIMARY KEY,
-  uuid BIGINT UNIQUE,
-  name VARCHAR,
-  photo VARCHAR,
-  description VARCHAR,
+CREATE TABLE participant (
+  uuid TEXT PRIMARY KEY,
+  name TEXT,
+  photo TEXT,
+  description TEXT,
   votes INT DEFAULT(0)
 );
 
-CREATE TABLE voters (
-  id BIGSERIAL NOT NULL PRIMARY KEY,
-  uuid BIGINT UNIQUE,
-  participants BIGINT,
-  FOREIGN KEY (participants) REFERENCES participants(uuid)
+CREATE TABLE voter (uuid TEXT PRIMARY KEY);
+
+CREATE TABLE voters_participant (
+  voter_uuid TEXT REFERENCES voter(uuid),
+  participant_uuid TEXT REFERENCES participant(uuid),
+  PRIMARY KEY (voter_uuid, participant_uuid)
 );
