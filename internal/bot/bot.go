@@ -1,7 +1,7 @@
 package bot
 
 import (
-	"github.com/AlexanderTurok/telegram-beaty-bot/pkg/service"
+	"github.com/AlexanderTurok/telegram-beaty-bot/internal/service"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/sirupsen/logrus"
 )

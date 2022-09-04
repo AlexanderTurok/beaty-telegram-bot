@@ -4,14 +4,14 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/AlexanderTurok/telegram-beaty-bot"
+	telegram "github.com/AlexanderTurok/telegram-beaty-bot/pkg"
 	"github.com/go-redis/redis/v9"
 )
 
 type Participant interface {
 	IsExists(uuid int) (bool, error)
-	GetParticipant(uuid int) (*telegram.Participant, error)
-	GetAllParticipants() (*[]telegram.Participant, error)
+	GetParticipant(uuid int) (telegram.Participant, error)
+	GetAllParticipants() ([]telegram.Participant, error)
 	Create(uuid int) error
 	UpdateParticipant(column, value string, uuid int) error
 	DeleteParticipant(uuid int) error

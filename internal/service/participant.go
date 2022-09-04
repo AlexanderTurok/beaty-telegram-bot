@@ -1,8 +1,8 @@
 package service
 
 import (
-	"github.com/AlexanderTurok/telegram-beaty-bot"
-	"github.com/AlexanderTurok/telegram-beaty-bot/pkg/repository"
+	"github.com/AlexanderTurok/telegram-beaty-bot/internal/repository"
+	telegram "github.com/AlexanderTurok/telegram-beaty-bot/pkg"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
@@ -61,12 +61,12 @@ func (p *ParticipantService) IsExists(uuid int) (bool, error) {
 	return exists, err
 }
 
-func (p *ParticipantService) GetParticipant(uuid int) (*telegram.Participant, error) {
+func (p *ParticipantService) GetParticipant(uuid int) (telegram.Participant, error) {
 	participant, err := p.repository.Participant.GetParticipant(uuid)
 	return participant, err
 }
 
-func (v *ParticipantService) GetAllParticipants() (*[]telegram.Participant, error) {
+func (v *ParticipantService) GetAllParticipants() ([]telegram.Participant, error) {
 	participants, err := v.repository.Participant.GetAllParticipants()
 	return participants, err
 }

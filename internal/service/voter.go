@@ -1,8 +1,8 @@
 package service
 
 import (
-	"github.com/AlexanderTurok/telegram-beaty-bot"
-	"github.com/AlexanderTurok/telegram-beaty-bot/pkg/repository"
+	"github.com/AlexanderTurok/telegram-beaty-bot/internal/repository"
+	telegram "github.com/AlexanderTurok/telegram-beaty-bot/pkg"
 )
 
 type VoterService struct {
@@ -15,14 +15,14 @@ func NewVoterService(repository *repository.Repository) *VoterService {
 	}
 }
 
-func (v *VoterService) GetParticipant(uuid int) (*telegram.Participant, error) {
+func (v *VoterService) GetParticipant(uuid int) (telegram.Participant, error) {
 	if err := v.create(uuid); err != nil {
-		return nil, err
+		return telegram.Participant{}, err
 	}
 
 	participantUUID, err := v.repository.Voter.GetParticipantUUID(uuid)
 	if err != nil {
-		return nil, err
+		return telegram.Participant{}, err
 	}
 
 	participant, err := v.repository.GetParticipant(participantUUID[0])

@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/AlexanderTurok/telegram-beaty-bot"
+	telegram "github.com/AlexanderTurok/telegram-beaty-bot/pkg"
 	"github.com/go-redis/redis/v9"
 	_ "github.com/lib/pq"
 )
@@ -32,15 +32,15 @@ func (p *ParticipantRepository) IsExists(uuid int) (bool, error) {
 	return exists, err
 }
 
-func (p *ParticipantRepository) GetParticipant(uuid int) (*telegram.Participant, error) {
+func (p *ParticipantRepository) GetParticipant(uuid int) (telegram.Participant, error) {
 	var par telegram.Participant
 	query := fmt.Sprintf("SELECT * FROM participants WHERE uuid=%d;", uuid)
-	err := p.db.QueryRow(query).Scan(&par.Id, &par.Uuid, &par.Name, &par.Photo, &par.Description, &par.Votes)
+	err := p.db.QueryRow(query).Scan(&par.Uuid, &par.Name, &par.Photo, &par.Description, &par.Likes)
 
-	return &par, err
+	return par, err
 }
 
-func (p *ParticipantRepository) GetAllParticipants() (*[]telegram.Participant, error) {
+func (p *ParticipantRepository) GetAllParticipants() ([]telegram.Participant, error) {
 	query := "SELECT * FROM participants;"
 	rows, err := p.db.Query(query)
 	if err != nil {
@@ -53,18 +53,18 @@ func (p *ParticipantRepository) GetAllParticipants() (*[]telegram.Participant, e
 
 	for rows.Next() {
 		var par telegram.Participant
-		if err := rows.Scan(&par.Id, &par.Uuid, &par.Name,
-			&par.Photo, &par.Description, &par.Votes); err != nil {
-			return &participants, err
+		if err := rows.Scan(&par.Uuid, &par.Name,
+			&par.Photo, &par.Description, &par.Likes); err != nil {
+			return participants, err
 		}
 		participants = append(participants, par)
 	}
 
 	if err = rows.Err(); err != nil {
-		return &participants, err
+		return participants, err
 	}
 
-	return &participants, nil
+	return participants, nil
 }
 
 func (p *ParticipantRepository) Create(uuid int) error {

@@ -4,9 +4,9 @@ import (
 	"context"
 	"os"
 
-	"github.com/AlexanderTurok/telegram-beaty-bot/pkg/bot"
-	"github.com/AlexanderTurok/telegram-beaty-bot/pkg/repository"
-	"github.com/AlexanderTurok/telegram-beaty-bot/pkg/service"
+	"github.com/AlexanderTurok/telegram-beaty-bot/internal/bot"
+	"github.com/AlexanderTurok/telegram-beaty-bot/internal/repository"
+	"github.com/AlexanderTurok/telegram-beaty-bot/internal/service"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
