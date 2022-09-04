@@ -9,10 +9,10 @@ import (
 )
 
 type Participant interface {
-	IsParticipant(uuid int) (bool, error)
+	IsExists(uuid int) (bool, error)
 	GetParticipant(uuid int) (*telegram.Participant, error)
 	GetAllParticipants() (*[]telegram.Participant, error)
-	AddParticipant(uuid int) error
+	Create(uuid int) error
 	UpdateParticipant(column, value string, uuid int) error
 	DeleteParticipant(uuid int) error
 	GetCache(uuid int) (string, error)
@@ -21,9 +21,10 @@ type Participant interface {
 }
 
 type Voter interface {
-	GetParticipant(uuid int) (*telegram.Participant, error)
-	GetCache(uuid int) (string, error)
-	SetCache(uuid int, value string) error
+	Create(uuid int) error
+	GetParticipantUUID(uuid int) ([]int, error)
+	DeleteParticipant(voterUuid, ParticipantUuid int) error
+	IsExists(uuid int) (bool, error)
 }
 
 type Repository struct {

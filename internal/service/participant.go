@@ -45,10 +45,10 @@ func (p *ParticipantService) SetDescription(message *tgbotapi.Message) error {
 	return err
 }
 
-func (p *ParticipantService) Register(message *tgbotapi.Message) error {
-	exists, err := p.repository.Participant.IsParticipant(message.From.ID)
+func (p *ParticipantService) Create(message *tgbotapi.Message) error {
+	exists, err := p.repository.Participant.IsExists(message.From.ID)
 	if !exists {
-		if err := p.repository.Participant.AddParticipant(message.From.ID); err != nil {
+		if err := p.repository.Participant.Create(message.From.ID); err != nil {
 			return err
 		}
 	}
@@ -56,8 +56,8 @@ func (p *ParticipantService) Register(message *tgbotapi.Message) error {
 	return err
 }
 
-func (p *ParticipantService) IsParticipant(uuid int) (bool, error) {
-	exists, err := p.repository.IsParticipant(uuid)
+func (p *ParticipantService) IsExists(uuid int) (bool, error) {
+	exists, err := p.repository.Participant.IsExists(uuid)
 	return exists, err
 }
 

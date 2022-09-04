@@ -34,7 +34,7 @@ func (b *Bot) handleMessages(message *tgbotapi.Message) error {
 }
 
 func (b *Bot) handleRegistration(message *tgbotapi.Message) error {
-	if err := b.service.Participant.Register(message); err != nil {
+	if err := b.service.Participant.Create(message); err != nil {
 		return err
 	}
 
@@ -103,88 +103,28 @@ func (b *Bot) back(message *tgbotapi.Message) error {
 }
 
 func (b *Bot) handleVote(message *tgbotapi.Message) error {
-	id, err := b.service.Voter.GetID(message)
+	participant, err := b.service.Voter.GetParticipant(message.From.ID)
 	if err != nil {
 		return err
 	}
 
-	p, err := b.service.Participant.GetAllParticipants()
-	if err != nil {
-		return err
+	msg := tgbotapi.NewPhotoShare(message.Chat.ID, participant.Photo)
+	msg.Caption = fmt.Sprintf("Name: %s\nDescription: %s", participant.Name, participant.Description)
+	msg.ReplyMarkup = tgbotapi.ReplyKeyboardMarkup{
+		Keyboard:        voteKeyboard.Keyboard,
+		OneTimeKeyboard: true,
+		ResizeKeyboard:  true,
 	}
+	_, err = b.bot.Send(msg)
 
-	if id >= len(*p) {
-		return b.handleEndOfParticipants(message)
-	} else {
-		if err := b.service.Voter.SetCache(message.From.ID, fmt.Sprint(id+1)); err != nil {
-			return err
-		}
-
-		if err := b.getProfile((*p)[id].Id, message, true); err != nil {
-			return err
-		}
-	}
-
-	return nil
+	return err
 }
 
 func (b *Bot) handleLike(message *tgbotapi.Message) error {
-	id, err := b.service.GetID(message)
-	if err != nil {
-		return err
-	}
-
-	if err := b.service.Participant.UpdateParticipant("uuid", fmt.Sprint(id), message.From.ID); err != nil {
-		return err
-	}
-
-	p, err := b.service.Participant.GetAllParticipants()
-	if err != nil {
-		return err
-	}
-
-	id += 1
-
-	if id >= len(*p) {
-		return b.handleEndOfParticipants(message)
-	} else {
-		if err := b.service.Voter.SetCache(message.From.ID, fmt.Sprint(id)); err != nil {
-			return err
-		}
-
-		if err := b.getProfile((*p)[id].Id, message, true); err != nil {
-			return err
-		}
-	}
-
 	return nil
 }
 
 func (b *Bot) handleDislike(message *tgbotapi.Message) error {
-	id, err := b.service.GetID(message)
-	if err != nil {
-		return err
-	}
-
-	p, err := b.service.Participant.GetAllParticipants()
-	if err != nil {
-		return err
-	}
-
-	id += 1
-
-	if id >= len(*p) {
-		return b.handleEndOfParticipants(message)
-	} else {
-		if err := b.service.Voter.SetCache(message.From.ID, fmt.Sprint(id)); err != nil {
-			return err
-		}
-
-		if err := b.getProfile((*p)[id].Id, message, true); err != nil {
-			return err
-		}
-	}
-
 	return nil
 }
 
@@ -210,7 +150,7 @@ func (b *Bot) getProfile(participantID int, message *tgbotapi.Message, showKeybo
 	}
 
 	msg := tgbotapi.NewPhotoShare(message.Chat.ID, user.Photo)
-	msg.Caption = fmt.Sprintf("%s, %s", user.Nickname, user.Information)
+	msg.Caption = fmt.Sprintf("%s, %s", user.Name, user.Description)
 	if showKeyboard {
 		msg.ReplyMarkup = tgbotapi.ReplyKeyboardMarkup{
 			Keyboard:        voteKeyboard.Keyboard,
@@ -218,7 +158,7 @@ func (b *Bot) getProfile(participantID int, message *tgbotapi.Message, showKeybo
 			ResizeKeyboard:  true,
 		}
 	}
-	if user.Photo != "" && user.Nickname != "" && user.Information != "" {
+	if user.Photo != "" && user.Name != "" && user.Description != "" {
 		_, err = b.bot.Send(msg)
 	}
 

@@ -24,7 +24,7 @@ func NewParticipantRepository(context context.Context, db *sql.DB, redis *redis.
 	}
 }
 
-func (p *ParticipantRepository) IsParticipant(uuid int) (bool, error) {
+func (p *ParticipantRepository) IsExists(uuid int) (bool, error) {
 	var exists bool
 	query := fmt.Sprintf("SELECT EXISTS(SELECT 1 FROM participants WHERE uuid='%d');", uuid)
 	err := p.db.QueryRow(query).Scan(&exists)
@@ -35,7 +35,7 @@ func (p *ParticipantRepository) IsParticipant(uuid int) (bool, error) {
 func (p *ParticipantRepository) GetParticipant(uuid int) (*telegram.Participant, error) {
 	var par telegram.Participant
 	query := fmt.Sprintf("SELECT * FROM participants WHERE uuid=%d;", uuid)
-	err := p.db.QueryRow(query).Scan(&par.Id, &par.Uuid, &par.Nickname, &par.Photo, &par.Information, &par.Votes)
+	err := p.db.QueryRow(query).Scan(&par.Id, &par.Uuid, &par.Name, &par.Photo, &par.Description, &par.Votes)
 
 	return &par, err
 }
@@ -53,8 +53,8 @@ func (p *ParticipantRepository) GetAllParticipants() (*[]telegram.Participant, e
 
 	for rows.Next() {
 		var par telegram.Participant
-		if err := rows.Scan(&par.Id, &par.Uuid, &par.Nickname,
-			&par.Photo, &par.Information, &par.Votes); err != nil {
+		if err := rows.Scan(&par.Id, &par.Uuid, &par.Name,
+			&par.Photo, &par.Description, &par.Votes); err != nil {
 			return &participants, err
 		}
 		participants = append(participants, par)
@@ -67,7 +67,7 @@ func (p *ParticipantRepository) GetAllParticipants() (*[]telegram.Participant, e
 	return &participants, nil
 }
 
-func (p *ParticipantRepository) AddParticipant(uuid int) error {
+func (p *ParticipantRepository) Create(uuid int) error {
 	query := fmt.Sprintf("INSERT INTO participants (uuid) VALUES (%d);", uuid)
 	_, err := p.db.Exec(query)
 
