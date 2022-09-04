@@ -43,7 +43,7 @@ func (b *Bot) Start() {
 
 		if value, _ := b.service.Participant.GetCache(update.Message.From.ID); value != "" {
 			if err := b.handleCache(update.Message, value); err != nil {
-				log.Fatalf("error in cache handler: %s", err)
+				log.Fatalf("error in cache handler: %s", err.Error())
 			}
 			continue
 		}
