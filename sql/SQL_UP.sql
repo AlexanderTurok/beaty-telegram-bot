@@ -3,7 +3,7 @@ CREATE TABLE participant (
   name TEXT,
   photo TEXT,
   description TEXT,
-  votes INT DEFAULT(0)
+  likes INT DEFAULT(0)
 );
 
 CREATE TABLE voter (uuid TEXT PRIMARY KEY);
