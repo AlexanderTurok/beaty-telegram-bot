@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"fmt"
 
 	"github.com/go-redis/redis/v9"
 	_ "github.com/lib/pq"
@@ -20,4 +21,35 @@ func NewVoterRepository(context context.Context, db *sql.DB, redis *redis.Client
 		db:      db,
 		redis:   redis,
 	}
+}
+
+// FIXME:
+func (r *VoterRepository) Create(uuid int64) error {
+	query := fmt.Sprintf("INSERT INTO %s (uuid) VALUES ($1)", voterTable)
+	_, err := r.db.Exec(query, uuid)
+	if err != nil {
+		return err
+	}
+
+	query = fmt.Sprintf("INSERT INTO %s (voter_uuid, participant_uuid) VALUES ($1, (SELECT uuid FROM %s))",
+		votersParticipantTable, participantTable)
+	_, err = r.db.Exec(query)
+
+	return err
+}
+
+func (r *VoterRepository) IsExists(uuid int64) (bool, error) {
+	var exists bool
+	query := fmt.Sprintf("SELECT EXISTS(SELECT 1 FROM %s WHERE uuid=$1)", voterTable)
+	err := r.db.QueryRow(query, uuid).Scan(&exists)
+
+	return exists, err
+}
+
+// FIXME:
+func (r *VoterRepository) GetParticipant(uuid int64) error {
+	// get participants uuid
+	// get participant by id
+	// delete participant uuid from voters_participant
+	return nil
 }
