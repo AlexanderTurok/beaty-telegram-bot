@@ -81,10 +81,11 @@ func (b *Bot) getDescription(message *tgbotapi.Message) error {
 func (b *Bot) getProfile(message *tgbotapi.Message) error {
 	user, err := b.service.Participant.Get(message.Chat.ID)
 	if err != nil {
+		b.handleError(message.Chat.ID, err)
 		return err
 	}
 
-	msg := tgbotapi.NewPhotoShare(message.Chat.ID, user.Photo)
+	msg := tgbotapi.NewPhotoShare(message.Chat.ID, fmt.Sprint(user.Photo))
 	msg.Caption = fmt.Sprintf("%s, %s", user.Name, user.Description)
 	msg.ReplyMarkup = registrationKeyboard
 	_, err = b.bot.Send(msg)
