@@ -1,10 +1,9 @@
 package bot
 
 import (
-	"log"
-
 	"github.com/AlexanderTurok/telegram-beaty-bot/pkg/service"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"github.com/sirupsen/logrus"
 )
 
 type Bot struct {
@@ -25,7 +24,7 @@ func (b *Bot) Start() {
 
 	updates, err := b.bot.GetUpdatesChan(u)
 	if err != nil {
-		log.Fatalf("error in updates channel: %s", err.Error())
+		logrus.Fatalf("error in updates channel: %s", err)
 	}
 
 	for update := range updates {
@@ -36,20 +35,20 @@ func (b *Bot) Start() {
 		if update.Message.IsCommand() {
 			err := b.handleCommands(update.Message)
 			if err != nil {
-				log.Fatalf("error in command handler: %s", err.Error())
+				logrus.Errorf("error in command handler: %s", err)
 			}
 			continue
 		}
 
 		if value, _ := b.service.Participant.GetCache(update.Message.From.ID); value != "" {
 			if err := b.handleCache(update.Message, value); err != nil {
-				log.Fatalf("error in cache handler: %s", err.Error())
+				logrus.Errorf("error in cache handler: %s", err)
 			}
 			continue
 		}
 
 		if err := b.handleMessages(update.Message); err != nil {
-			log.Fatalf("error in message handler: %s", err.Error())
+			logrus.Errorf("error in message handler: %s", err)
 		}
 	}
 }

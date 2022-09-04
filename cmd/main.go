@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"log"
 	"os"
 
 	"github.com/AlexanderTurok/telegram-beaty-bot/pkg/bot"
@@ -11,6 +10,7 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )
 
@@ -19,11 +19,11 @@ func main() {
 
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatalf("error while loading env: %s", err.Error())
+		logrus.Fatalf("error while loading env: %s", err)
 	}
 
 	if err := initConfig(); err != nil {
-		log.Fatalf("error initializing configs: %s", err.Error())
+		logrus.Fatalf("error initializing configs: %s", err)
 	}
 
 	db, err := repository.NewPostgresDB(repository.Config{
@@ -42,7 +42,7 @@ func main() {
 
 	botApi, err := tgbotapi.NewBotAPI(os.Getenv("API_KEY"))
 	if err != nil {
-		log.Fatalf("error while getting api key: %s", err.Error())
+		logrus.Fatalf("error while getting api key: %s", err)
 	}
 
 	botApi.Debug = false
