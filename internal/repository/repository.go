@@ -29,7 +29,7 @@ type Participant interface {
 type Voter interface {
 	Create(uuid int64) error
 	IsExists(uuid int64) (bool, error)
-	GetParticipant(uuid int64) error
+	GetParticipant(uuid int64) (telegram.Participant, error)
 }
 
 type Repository struct {

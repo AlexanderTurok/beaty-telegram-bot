@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 
+	telegram "github.com/AlexanderTurok/telegram-beaty-bot/pkg"
 	"github.com/go-redis/redis/v9"
 	_ "github.com/lib/pq"
 )
@@ -47,9 +48,9 @@ func (r *VoterRepository) IsExists(uuid int64) (bool, error) {
 }
 
 // FIXME:
-func (r *VoterRepository) GetParticipant(uuid int64) error {
+func (r *VoterRepository) GetParticipant(uuid int64) (telegram.Participant, error) {
 	// get participants uuid
 	// get participant by id
 	// delete participant uuid from voters_participant
-	return nil
+	return telegram.Participant{}, nil
 }
