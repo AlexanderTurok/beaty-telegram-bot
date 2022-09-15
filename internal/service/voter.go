@@ -21,7 +21,12 @@ func (s *VoterService) Create(uuid int64) error {
 		return err
 	}
 	if !exists {
-		return s.repository.Create(uuid)
+		if err := s.repository.Create(uuid); err != nil {
+			return err
+		}
+		if err := s.repository.Activate(uuid); err != nil {
+			return err
+		}
 	}
 
 	return nil
