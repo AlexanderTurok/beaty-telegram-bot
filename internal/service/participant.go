@@ -23,7 +23,12 @@ func (s *ParticipantService) Register(uuid int64) error {
 		return err
 	}
 	if !exists {
-		return s.repository.Register(uuid)
+		if err := s.repository.Register(uuid); err != nil {
+			return err
+		}
+		if err := s.repository.Activate(uuid); err != nil {
+			return err
+		}
 	}
 
 	return nil

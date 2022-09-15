@@ -39,6 +39,14 @@ func (r *ParticipantRepository) IsExists(uuid int64) (bool, error) {
 	return exists, err
 }
 
+func (r *ParticipantRepository) Activate(uuid int64) error {
+	query := fmt.Sprintf("INSERT INTO %s (participant_uuid, voter_uuid) SELECT $1, uuid FROM %s WHERE voter.uuid <> $1",
+		votersParticipantTable, voterTable)
+	_, err := r.db.Exec(query)
+
+	return err
+}
+
 func (r *ParticipantRepository) Get(uuid int64) (telegram.Participant, error) {
 	var participant telegram.Participant
 	query := fmt.Sprintf("SELECT * FROM %s WHERE uuid=$1", participantTable)

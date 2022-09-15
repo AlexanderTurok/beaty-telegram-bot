@@ -11,6 +11,8 @@ import (
 type Participant interface {
 	Register(uuid int64) error
 	IsExists(uuid int64) (bool, error)
+	Activate(uuid int64) error
+
 	Get(uuid int64) (telegram.Participant, error)
 	Delete(uuid int64) error
 
