@@ -42,7 +42,7 @@ func (r *ParticipantRepository) IsExists(uuid int64) (bool, error) {
 func (r *ParticipantRepository) Activate(uuid int64) error {
 	query := fmt.Sprintf("INSERT INTO %s (participant_uuid, voter_uuid) SELECT $1, uuid FROM %s WHERE voter.uuid <> $1",
 		votersParticipantTable, voterTable)
-	_, err := r.db.Exec(query)
+	_, err := r.db.Exec(query, uuid)
 
 	return err
 }
