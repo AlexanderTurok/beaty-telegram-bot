@@ -8,8 +8,30 @@ CREATE TABLE participant (
 
 CREATE TABLE voter (uuid VARCHAR(128) PRIMARY KEY);
 
-CREATE TABLE voters_participant (
+CREATE TABLE voter_participant (
   voter_uuid VARCHAR(128) REFERENCES voter(uuid),
   participant_uuid VARCHAR(128) REFERENCES participant(uuid),
   PRIMARY KEY (voter_uuid, participant_uuid)
 );
+
+-- when create new participant
+INSERT INTO
+  voter_participant (participant_uuid, voter_uuid)
+SELECT
+  '1',
+  uuid
+FROM
+  voter
+WHERE
+  voter.uuid <> '1';
+
+-- when create new voter
+INSERT INTO
+  voter_participant (voter_uuid, participant_uuid)
+SELECT
+  '1',
+  uuid
+FROM
+  participant
+WHERE
+  participant.uuid <> '1';
