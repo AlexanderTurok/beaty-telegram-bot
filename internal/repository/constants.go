@@ -3,5 +3,5 @@ package repository
 const (
 	participantTable       = "participant"
 	voterTable             = "voter"
-	votersParticipantTable = "voters_participant"
+	votersParticipantTable = "voter_participant"
 )
