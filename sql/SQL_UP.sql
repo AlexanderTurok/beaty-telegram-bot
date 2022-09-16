@@ -36,6 +36,7 @@ FROM
 WHERE
   participant.uuid <> '1';
 
+-- when select participant for voter
 SELECT
   participant_uuid
 FROM
