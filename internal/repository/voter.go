@@ -60,10 +60,29 @@ func (r *VoterRepository) GetParticipant(uuid int64) (telegram.Participant, erro
 	return participant, err
 }
 
-func (r *VoterRepository) DeleteParticipant(voteUuid int64, participantUuid string) error {
-	query := fmt.Sprintf("DELETE FROM %s WHERE voter_uuid = $1 AND participant_uuid = $2",
-		votersParticipantTable)
-	_, err := r.db.Exec(query)
+func (r *VoterRepository) LikeParticipant(uuid string) error {
+	query := fmt.Sprintf("UPDATE %s SET like = like + 1 WHERE uuid = $1", participantTable)
+	_, err := r.db.Exec(query, uuid)
 
 	return err
+}
+
+func (r *VoterRepository) DeleteParticipant(voterUuid int64, participantUuid string) error {
+	query := fmt.Sprintf("DELETE FROM %s WHERE voter_uuid = $1 AND participant_uuid = $2",
+		votersParticipantTable)
+	_, err := r.db.Exec(query, voterUuid, participantUuid)
+
+	return err
+}
+
+func (r *VoterRepository) SetCache(voterUuid string, participantUuid string) error {
+	err := r.redis.Set(r.context, voterUuid, participantUuid, 0)
+
+	return err.Err()
+}
+
+func (r *VoterRepository) GetCache(uuid string) (string, error) {
+	row := r.redis.Get(r.context, uuid)
+
+	return row.String(), row.Err()
 }

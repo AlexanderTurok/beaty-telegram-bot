@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/AlexanderTurok/telegram-beaty-bot/internal/repository"
 	telegram "github.com/AlexanderTurok/telegram-beaty-bot/pkg"
@@ -50,5 +51,20 @@ func (s *VoterService) GetParticipant(uuid int64) (telegram.Participant, error) 
 		return telegram.Participant{}, err
 	}
 
+	if err := s.repository.SetCache(fmt.Sprint(uuid), participant.Uuid); err != nil {
+		return telegram.Participant{}, err
+	}
+
 	return participant, nil
+}
+
+func (s *VoterService) LikeParticipant(uuid int64) error {
+	participantUuid, err := s.repository.GetCache(fmt.Sprint(uuid))
+	if err != nil {
+		return err
+	}
+
+	err = s.repository.LikeParticipant(participantUuid)
+
+	return err
 }

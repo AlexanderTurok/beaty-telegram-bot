@@ -34,7 +34,11 @@ type Voter interface {
 	IsExists(uuid int64) (bool, error)
 
 	GetParticipant(uuid int64) (telegram.Participant, error)
-	DeleteParticipant(voteUuid int64, participantUuid string) error
+	LikeParticipant(uuid string) error
+	DeleteParticipant(voterUuid int64, participantUuid string) error
+
+	SetCache(voterUuid, participantUuid string) error
+	GetCache(uuid string) (string, error)
 }
 
 type Repository struct {

@@ -137,11 +137,37 @@ func (b *Bot) handleVote(message *tgbotapi.Message) error {
 }
 
 func (b *Bot) handleLike(message *tgbotapi.Message) error {
-	return nil
+	if err := b.service.Voter.LikeParticipant(message.Chat.ID); err != nil {
+		return err
+	}
+
+	participant, err := b.service.Voter.GetParticipant(message.Chat.ID)
+	if err != nil {
+		b.handleError(message.Chat.ID, err)
+		return err
+	}
+
+	msg := tgbotapi.NewPhotoShare(message.Chat.ID, fmt.Sprint(participant.Photo))
+	msg.Caption = fmt.Sprintf("%s, %s", participant.Name, participant.Description)
+	msg.ReplyMarkup = voteKeyboard
+	_, err = b.bot.Send(msg)
+
+	return err
 }
 
 func (b *Bot) handleDislike(message *tgbotapi.Message) error {
-	return nil
+	participant, err := b.service.Voter.GetParticipant(message.Chat.ID)
+	if err != nil {
+		b.handleError(message.Chat.ID, err)
+		return err
+	}
+
+	msg := tgbotapi.NewPhotoShare(message.Chat.ID, fmt.Sprint(participant.Photo))
+	msg.Caption = fmt.Sprintf("%s, %s", participant.Name, participant.Description)
+	msg.ReplyMarkup = voteKeyboard
+	_, err = b.bot.Send(msg)
+
+	return err
 }
 
 func (b *Bot) handleDefaultMessage(message *tgbotapi.Message) error {
