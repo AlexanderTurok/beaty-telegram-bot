@@ -24,17 +24,12 @@ func NewVoterRepository(context context.Context, db *sqlx.DB, redis *redis.Clien
 	}
 }
 
-// FIXME:
 func (r *VoterRepository) Create(uuid int64) error {
 	query := fmt.Sprintf("INSERT INTO %s (uuid) VALUES ($1)", voterTable)
 	_, err := r.db.Exec(query, uuid)
 	if err != nil {
 		return err
 	}
-
-	query = fmt.Sprintf("INSERT INTO %s (voter_uuid, participant_uuid) VALUES ($1, (SELECT uuid FROM %s))",
-		votersParticipantTable, participantTable)
-	_, err = r.db.Exec(query)
 
 	return err
 }
@@ -55,7 +50,6 @@ func (r *VoterRepository) Activate(uuid int64) error {
 	return err
 }
 
-// FIXME:
 func (r *VoterRepository) GetParticipant(uuid int64) (telegram.Participant, error) {
 	var participant telegram.Participant
 
