@@ -117,7 +117,6 @@ func (b *Bot) back(message *tgbotapi.Message) error {
 	return err
 }
 
-// FIXME:
 func (b *Bot) handleVote(message *tgbotapi.Message) error {
 	if err := b.service.Voter.Create(message.Chat.ID); err != nil {
 		return err
