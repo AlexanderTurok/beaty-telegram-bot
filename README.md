@@ -1,4 +1,17 @@
 # beaty-telegram-bot
-Telegram Bot for holding a Beaty Contest
+Telegram Bot for holding a Beaty Contest.
 
-Don't even try to undestand this code
+## Tools used for creation
+-[Go Telegram SDK](https://github.com/go-telegram-bot-api/telegram-bot-api) for using Telegram API.
+-Postgres for storing users data. 
+-Redis for Caching.
+
+## To start
+1. Create .env file
+```
+  API_KEY = Telegram API key 
+  DB_PASSWORD = Password to your SQL database 
+  REDIS_PASSWORD = Redis Password 
+ ```
+2. Edit ```Config.yml``` 
+3. Execute command: ```go run cmd/main.go```
