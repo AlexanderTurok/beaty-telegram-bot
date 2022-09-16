@@ -1,4 +1,4 @@
-DROP TABLE voters_participant;
+DROP TABLE voter_participant;
 
 DROP TABLE voter;
 
