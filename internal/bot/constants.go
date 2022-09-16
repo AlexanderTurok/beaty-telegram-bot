@@ -6,6 +6,7 @@ const (
 	// command list
 	start   = "start"
 	support = "support"
+	help    = "help"
 
 	// choose role
 	register = "Register!"
