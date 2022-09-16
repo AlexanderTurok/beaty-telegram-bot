@@ -2,21 +2,21 @@ package repository
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 
 	telegram "github.com/AlexanderTurok/telegram-beaty-bot/pkg"
 	"github.com/go-redis/redis/v9"
+	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
 
 type VoterRepository struct {
 	context context.Context
-	db      *sql.DB
+	db      *sqlx.DB
 	redis   *redis.Client
 }
 
-func NewVoterRepository(context context.Context, db *sql.DB, redis *redis.Client) *VoterRepository {
+func NewVoterRepository(context context.Context, db *sqlx.DB, redis *redis.Client) *VoterRepository {
 	return &VoterRepository{
 		context: context,
 		db:      db,
@@ -57,8 +57,19 @@ func (r *VoterRepository) Activate(uuid int64) error {
 
 // FIXME:
 func (r *VoterRepository) GetParticipant(uuid int64) (telegram.Participant, error) {
-	// get participants uuid
-	// get participant by id
-	// delete participant uuid from voters_participant
-	return telegram.Participant{}, nil
+	var participant telegram.Participant
+
+	query := fmt.Sprintf("SELECT participant_uuid FROM %s LEFT JOIN %s ON participant.uuid = voter_participant.participant_uuid WHERE voter_participant.voter_uuid = $1 LIMIT 1",
+		votersParticipantTable, participantTable)
+	err := r.db.Get(&participant, query, uuid)
+
+	return participant, err
+}
+
+func (r *VoterRepository) DeleteParticipant(voteUuid int64, participantUuid string) error {
+	query := fmt.Sprintf("DELETE FROM %s WHERE voter_uuid = $1 AND participant_uuid = $2",
+		votersParticipantTable)
+	_, err := r.db.Exec(query)
+
+	return err
 }

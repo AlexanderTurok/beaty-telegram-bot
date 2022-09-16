@@ -1,13 +1,13 @@
 package repository
 
 import (
-	"database/sql"
+	"github.com/jmoiron/sqlx"
 )
 
-func NewPostgresDB(config Config) (*sql.DB, error) {
+func NewPostgresDB(config Config) (*sqlx.DB, error) {
 	// db, err := sql.Open("postgres", fmt.Sprintf("host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
 	// 	config.Host, config.Port, config.Username, config.DBName, config.Password, config.SSLMode))
-	db, err := sql.Open("postgres", "dbname=tgbeaty_db sslmode=disable")
+	db, err := sqlx.Open("postgres", "dbname=tgbeaty_db sslmode=disable")
 	if err != nil {
 		return nil, err
 	}

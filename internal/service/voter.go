@@ -42,5 +42,9 @@ func (s *VoterService) GetParticipant(uuid int64) (telegram.Participant, error) 
 		return telegram.Participant{}, err
 	}
 
-	return participant, err
+	if err := s.repository.DeleteParticipant(uuid, participant.Uuid); err != nil {
+		return telegram.Participant{}, err
+	}
+
+	return participant, nil
 }

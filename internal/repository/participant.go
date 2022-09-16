@@ -2,21 +2,21 @@ package repository
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 
 	telegram "github.com/AlexanderTurok/telegram-beaty-bot/pkg"
 	"github.com/go-redis/redis/v9"
+	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
 
 type ParticipantRepository struct {
 	context context.Context
-	db      *sql.DB
+	db      *sqlx.DB
 	redis   *redis.Client
 }
 
-func NewParticipantRepository(context context.Context, db *sql.DB, redis *redis.Client) *ParticipantRepository {
+func NewParticipantRepository(context context.Context, db *sqlx.DB, redis *redis.Client) *ParticipantRepository {
 	return &ParticipantRepository{
 		context: context,
 		db:      db,

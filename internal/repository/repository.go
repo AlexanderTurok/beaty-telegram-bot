@@ -2,10 +2,10 @@ package repository
 
 import (
 	"context"
-	"database/sql"
 
 	telegram "github.com/AlexanderTurok/telegram-beaty-bot/pkg"
 	"github.com/go-redis/redis/v9"
+	"github.com/jmoiron/sqlx"
 )
 
 type Participant interface {
@@ -32,7 +32,9 @@ type Voter interface {
 	Create(uuid int64) error
 	Activate(uuid int64) error
 	IsExists(uuid int64) (bool, error)
+
 	GetParticipant(uuid int64) (telegram.Participant, error)
+	DeleteParticipant(voteUuid int64, participantUuid string) error
 }
 
 type Repository struct {
@@ -40,7 +42,7 @@ type Repository struct {
 	Voter
 }
 
-func NewRepository(context context.Context, db *sql.DB, redis *redis.Client) *Repository {
+func NewRepository(context context.Context, db *sqlx.DB, redis *redis.Client) *Repository {
 	return &Repository{
 		Participant: NewParticipantRepository(context, db, redis),
 		Voter:       NewVoterRepository(context, db, redis),

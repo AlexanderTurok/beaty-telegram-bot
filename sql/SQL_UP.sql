@@ -35,3 +35,13 @@ FROM
   participant
 WHERE
   participant.uuid <> '1';
+
+SELECT
+  participant_uuid
+FROM
+  voter_participant
+  LEFT JOIN participant ON participant.uuid = voter_participant.participant_uuid
+WHERE
+  voter_participant.voter_uuid = '1'
+LIMIT
+  1;
