@@ -2,7 +2,7 @@ db:
   username: "postgres"
   host: "localhost"
   port: "5432"
-  dbname: "tgbeaty_db"
+  dbname: "postgres"
   sslmode: "disable"
 
 redis:
