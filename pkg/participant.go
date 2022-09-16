@@ -3,7 +3,7 @@ package telegram
 import "errors"
 
 type Participant struct {
-	Uuid        string      `db:"uuid"`
+	Uuid        string      `db:"participant_uuid"`
 	Name        interface{} `db:"name"`
 	Photo       interface{} `db:"photo"`
 	Description interface{} `db:"description"`
