@@ -1,8 +1,11 @@
 package service
 
 import (
+	"errors"
+
 	"github.com/AlexanderTurok/telegram-beaty-bot/internal/repository"
 	telegram "github.com/AlexanderTurok/telegram-beaty-bot/pkg"
+	"github.com/sirupsen/logrus"
 )
 
 type VoterService struct {
@@ -35,7 +38,8 @@ func (s *VoterService) Create(uuid int64) error {
 func (s *VoterService) GetParticipant(uuid int64) (telegram.Participant, error) {
 	participant, err := s.repository.GetParticipant(uuid)
 	if err != nil {
-		return telegram.Participant{}, err
+		logrus.Errorf("error while getting participant: %s", err)
+		return telegram.Participant{}, errors.New("there is no availible profiles... Wait until someone adds new profile")
 	}
 
 	if err := participant.Validate(); err != nil {
