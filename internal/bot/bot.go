@@ -41,7 +41,7 @@ func (b *Bot) Start() {
 		}
 
 		// check if only participants message has cache
-		if value, _ := b.service.Participant.GetCache(update.Message.Chat.ID); value != name && value != photo && value != description {
+		if value, _ := b.service.Participant.GetCache(update.Message.Chat.ID); value == nameCache || value == photoCache || value == descriptionCache {
 			if err := b.handleCache(update.Message, value); err != nil {
 				logrus.Errorf("error in cache handler: %s", err)
 			}
