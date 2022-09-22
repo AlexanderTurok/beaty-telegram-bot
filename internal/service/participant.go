@@ -37,7 +37,7 @@ func (s *ParticipantService) Register(uuid int64) error {
 func (s *ParticipantService) Get(uuid int64) (telegram.Participant, error) {
 	user, err := s.repository.Get(uuid)
 	if err != nil {
-		return user, err
+		return telegram.Participant{}, err
 	}
 
 	if err := user.Validate(); err != nil {

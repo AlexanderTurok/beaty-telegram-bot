@@ -5,6 +5,8 @@ import (
 	telegram "github.com/AlexanderTurok/telegram-beaty-bot/pkg"
 )
 
+//go:generate mockgen -source=service.go -destination=mocks/mock.go
+
 type Participant interface {
 	Register(uuid int64) error
 	Get(uuid int64) (telegram.Participant, error)
